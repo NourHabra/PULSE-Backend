@@ -1,0 +1,59 @@
+package com.pulse.user.service;
+
+import com.pulse.exception.EmailAlreadyExistsException;
+import com.pulse.user.dto.HealthEmployeeLoginDto;
+import com.pulse.user.dto.HealthEmployeeRegisterDto;
+import com.pulse.user.model.Admin;
+import com.pulse.user.model.HealthEmployee;
+import com.pulse.user.repository.AdminRepository;
+import com.pulse.user.repository.HealthEmployeeRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class HealthEmployeeService {
+
+    private final HealthEmployeeRepository healthEmployeeRepository;
+    private final AdminRepository adminRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public HealthEmployeeService(
+            HealthEmployeeRepository healthEmployeeRepository,
+            AdminRepository adminRepository,
+            PasswordEncoder passwordEncoder
+    ) {
+        this.healthEmployeeRepository = healthEmployeeRepository;
+        this.adminRepository = adminRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public HealthEmployee register(HealthEmployeeRegisterDto dto) {
+        // 🔐 Check if email already exists
+        if (healthEmployeeRepository.findByEmail(dto.getEmail()) != null) {
+            throw new EmailAlreadyExistsException(dto.getEmail());
+        }
+
+        // 🔍 Validate the admin who is authorizing
+        Admin admin = adminRepository.findById(dto.getAuthorizedByAdminId())
+                .orElseThrow(() -> new RuntimeException("Authorizing admin not found"));
+
+        // 🧑‍⚕️ Create the employee
+        HealthEmployee employee = new HealthEmployee();
+        employee.setFirstName(dto.getFirstName());
+        employee.setLastName(dto.getLastName());
+        employee.setEmail(dto.getEmail());
+        employee.setPassword(passwordEncoder.encode(dto.getPassword()));
+        employee.setRole("HEALTH_EMPLOYEE");
+        employee.setAuthorizedBy(admin);
+
+        return healthEmployeeRepository.save(employee);
+    }
+
+    public HealthEmployee login(HealthEmployeeLoginDto dto) {
+        HealthEmployee employee = healthEmployeeRepository.findByEmail(dto.getEmail());
+        if (employee == null || !passwordEncoder.matches(dto.getPassword(), employee.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+        return employee;
+    }
+}
