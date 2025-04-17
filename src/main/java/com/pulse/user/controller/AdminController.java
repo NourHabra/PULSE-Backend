@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.pulse.email.service.ActivationService;
 @RestController
 @RequestMapping("/auth")
 public class AdminController {
@@ -18,16 +18,19 @@ public class AdminController {
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
     private final AdminService adminService;
     private final JwtService jwtService;
+    private final ActivationService activationSvc;
 
-    public AdminController(AdminService adminService, JwtService jwtService) {
+    public AdminController(AdminService adminService, JwtService jwtService, ActivationService activationSvc) {
         this.adminService = adminService;
         this.jwtService = jwtService;
+        this.activationSvc = activationSvc;
     }
 
     @PostMapping("/register/admin")
     public ResponseEntity<UserLoginResponse> registerAdmin(@RequestBody AdminRegisterDto dto) {
         try {
             Admin admin = adminService.register(dto);
+            activationSvc.sendActivation(admin);
             String token = jwtService.generateToken(admin);
             log.info(" admin register {}", admin);
             log.info(" token {}", token);

@@ -56,6 +56,8 @@ public class User implements UserDetails {
     @Column(name = "Role")
     private String role;
 
+    @Column(name = "Enabled")
+    private boolean enabled = false;
     // -- Constructors --
 
     public User() {
@@ -107,11 +109,14 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
-//    Setters and Getters
 
+//    Setters and Getters
+    public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+}
     public Long getUserId() {
         return userId;
     }

@@ -8,6 +8,7 @@ import com.pulse.user.model.HealthEmployee;
 import com.pulse.user.service.HealthEmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.pulse.email.service.ActivationService;
 
 @RestController
 @RequestMapping("/auth")
@@ -16,14 +17,17 @@ public class HealthEmployeeController {
     private final HealthEmployeeService healthEmployeeService;
     private final JwtService jwtService;
 
-    public HealthEmployeeController(HealthEmployeeService healthEmployeeService, JwtService jwtService) {
+    private final ActivationService activationSvc;
+    public HealthEmployeeController(HealthEmployeeService healthEmployeeService, JwtService jwtService, ActivationService activationSvc) {
         this.healthEmployeeService = healthEmployeeService;
         this.jwtService = jwtService;
+        this.activationSvc = activationSvc;
     }
 
     @PostMapping("/register/healthemployee")
     public ResponseEntity<UserLoginResponse> registerHealthEmployee(@RequestBody HealthEmployeeRegisterDto dto) {
         HealthEmployee employee = healthEmployeeService.register(dto);
+        activationSvc.sendActivation(employee);
         String token = jwtService.generateToken(employee);
 
         return ResponseEntity.ok(new UserLoginResponse(

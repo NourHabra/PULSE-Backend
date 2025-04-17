@@ -9,7 +9,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 @EntityScan(basePackages ={
         "com.pulse.user.model",
         "com.pulse.pharmacy.model",
-        "com.pulse.laboratory.model"
+        "com.pulse.laboratory.model",
+        "com.pulse.email.model"
 })
 public class PulseApplication {
 

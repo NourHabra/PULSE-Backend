@@ -31,8 +31,7 @@ public class ApplicationConfiguration {
                 throw new UsernameNotFoundException("User not found");
             }
             return user;
-            // If user is an Admin row in DB, JPA returns an Admin instance
-            // which is still a UserDetails
+
         };
     }
 
