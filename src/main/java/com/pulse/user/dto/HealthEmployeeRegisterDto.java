@@ -7,7 +7,7 @@ public class HealthEmployeeRegisterDto {
     private String email;
     private String password;
 
-    // Specific: which admin authorized this health employee
+
     private Long authorizedByAdminId;
 
     public HealthEmployeeRegisterDto() {}

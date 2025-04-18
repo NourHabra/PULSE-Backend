@@ -27,28 +27,45 @@ public class HealthEmployeeService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public HealthEmployee register(HealthEmployeeRegisterDto dto) {
-        // 🔐 Check if email already exists
-        if (healthEmployeeRepository.findByEmail(dto.getEmail()) != null) {
-            throw new EmailAlreadyExistsException(dto.getEmail());
-        }
+//    public HealthEmployee register(HealthEmployeeRegisterDto dto) {
+//
+//        if (healthEmployeeRepository.findByEmail(dto.getEmail()) != null) {
+//            throw new EmailAlreadyExistsException(dto.getEmail());
+//        }
+//
+//        // 🔍 Validate the admin who is authorizing
+//        Admin admin = adminRepository.findById(dto.getAuthorizedByAdminId())
+//                .orElseThrow(() -> new RuntimeException("Authorizing admin not found"));
+//
+//
+//        HealthEmployee employee = new HealthEmployee();
+//        employee.setFirstName(dto.getFirstName());
+//        employee.setLastName(dto.getLastName());
+//        employee.setEmail(dto.getEmail());
+//        employee.setPassword(passwordEncoder.encode(dto.getPassword()));
+//        employee.setRole("HEALTH_EMPLOYEE");
+//        employee.setAuthorizedBy(admin);
+//
+//        return healthEmployeeRepository.save(employee);
+//    }
 
-        // 🔍 Validate the admin who is authorizing
-        Admin admin = adminRepository.findById(dto.getAuthorizedByAdminId())
-                .orElseThrow(() -> new RuntimeException("Authorizing admin not found"));
+    public HealthEmployee addHealthEmployee(HealthEmployeeRegisterDto dto, Long adminId) {
+        Admin admin = adminRepository.findById(adminId)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
 
-        // 🧑‍⚕️ Create the employee
-        HealthEmployee employee = new HealthEmployee();
-        employee.setFirstName(dto.getFirstName());
-        employee.setLastName(dto.getLastName());
-        employee.setEmail(dto.getEmail());
-        employee.setPassword(passwordEncoder.encode(dto.getPassword()));
-        employee.setRole("HEALTH_EMPLOYEE");
-        employee.setAuthorizedBy(admin);
+        HealthEmployee healthEmployee = new HealthEmployee();
+        healthEmployee.setFirstName(dto.getFirstName());
+        healthEmployee.setLastName(dto.getLastName());
+        healthEmployee.setEmail(dto.getEmail());
+        healthEmployee.setPassword(dto.getPassword());  // Add appropriate password encoding here
+        healthEmployee.setAuthorizedBy(admin);
 
-        return healthEmployeeRepository.save(employee);
+        return healthEmployeeRepository.save(healthEmployee);
     }
 
+    public HealthEmployee save(HealthEmployee healthEmployee) {
+        return healthEmployeeRepository.save(healthEmployee);
+    }
     public HealthEmployee login(HealthEmployeeLoginDto dto) {
         HealthEmployee employee = healthEmployeeRepository.findByEmail(dto.getEmail());
         if (employee == null || !passwordEncoder.matches(dto.getPassword(), employee.getPassword())) {

@@ -14,9 +14,14 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("EmailAlreadyExists", ex.getMessage()));
     }
 
-    // You can add more exception handlers here...
+    @ExceptionHandler(WrongPasswordException.class)
+    public ResponseEntity<Object> handleWrongPassword(WrongPasswordException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN) // 403
+                .body(new ErrorResponse("WrongPassword", ex.getMessage()));
+    }
 
-    // Optional: a DTO for standard error response
+
     public static class ErrorResponse {
         private String error;
         private String message;

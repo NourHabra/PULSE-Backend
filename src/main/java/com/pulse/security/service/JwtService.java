@@ -1,16 +1,18 @@
 package com.pulse.security.service;
 
+import com.pulse.user.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.Duration;
-
+import com.pulse.user.repository.UserRepository;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -26,8 +28,12 @@ public class JwtService {
 
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
+    private final UserRepository userRepository;
 
-
+    @Autowired
+    public JwtService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -59,6 +65,16 @@ public class JwtService {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
+    public UserDetails getUserFromToken(String token) {
+        String username = extractUsername(token);  // Assume you have a method to extract username from the token.
+        if (username != null) {
+
+            User user = userRepository.findByEmail(username);
+            return user;
+        }
+        return null;
+    }
+
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
@@ -88,4 +104,6 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+
 }

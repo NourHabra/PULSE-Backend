@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 public class HealthEmployee extends User {
 
     @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "AuthorizedBy")
     private Admin authorizedBy;
 

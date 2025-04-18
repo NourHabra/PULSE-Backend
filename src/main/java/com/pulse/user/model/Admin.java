@@ -13,7 +13,9 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "AdminID")
 public class Admin extends User {
 
-    @OneToMany(mappedBy = "authorizedBy", cascade = CascadeType.ALL, orphanRemoval = false)
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "authorizedBy", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = false)
     private List<HealthEmployee> authorizedHealthEmployees;
 
     public Admin() {
@@ -21,11 +23,18 @@ public class Admin extends User {
     }
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "authorizedBy")
+    @OneToMany(mappedBy = "authorizedBy", fetch = FetchType.EAGER)
     private List<HealthEmployee> approvedEmployees;
 
+
+    public List<HealthEmployee> getAuthorizedHealthEmployees() {
+        return authorizedHealthEmployees;
+    }
 
     public void setAuthorizedHealthEmployees(List<HealthEmployee> authorizedHealthEmployees) {
         this.authorizedHealthEmployees = authorizedHealthEmployees;
     }
+
+
+
 }
