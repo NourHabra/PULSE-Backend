@@ -1,8 +1,22 @@
 <!DOCTYPE html>
-<html>
-<body>
-<p>Hello <span th:text="${name}"></span>,</p>
-<p>Please <a th:href="${link}">click here</a> to activate your account.</p>
-<p>If you didn’t request this, ignore this email.</p>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Activation</title>
+</head>
+<body style="background-color: #183847; margin: 0; padding: 0;">
+<div style="background-color: #183847; max-width: 600px; margin: 30px auto; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+    <!-- Logo at the top -->
+    <img src="https://test.walidalgower.com/wp-content/uploads/2025/04/Dark-Horizontal.jpg" alt="Logo" style="display: block; margin: 0 auto 20px; max-width: 50%;">
+
+    <h2 style="color: #6be1f1; font-size: 24px; margin-bottom: 15px;">Hello, <span th:text="${name}"></span>!</h2>
+
+    <p style="color: #f0f0f0; font-size: 16px; line-height: 1.5;">We're excited to have you join us. Please <a th:href="${link}" style="color: #007bff; text-decoration: none; font-weight: bold;">click here</a> to activate your account and get started.</p>
+
+    <p style="color: #f0f0f0; font-size: 16px; line-height: 1.5;">If you didn’t request this, please ignore this email. Your account will not be activated.</p>
+
+    <p style="font-size: 14px; color: #888; margin-top: 30px; text-align: center;">If you have any questions, feel free to reach out to our support team.</p>
+</div>
 </body>
 </html>

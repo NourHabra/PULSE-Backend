@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import com.pulse.email.service.EmailService;
 import com.pulse.email.model.OtpEntry;
 import com.pulse.email.repository.OtpEntryRepository;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 @Service
 public class OtpService {
@@ -23,12 +25,20 @@ public class OtpService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    private final TemplateEngine templateEngine;
 
-    public OtpService(OtpEntryRepository otpRepo, EmailService emailService) {
+    public OtpService(OtpEntryRepository otpRepo, EmailService emailService,TemplateEngine templateEngine) {
         this.otpRepo = otpRepo;
         this.emailService = emailService;
+        this.templateEngine=templateEngine;
     }
+    private String generateOtpEmailHtml(int otp) {
+        Context context = new Context();
+        context.setVariable("otp", otp);
 
+
+        return templateEngine.process("otp-email.html", context);
+    }
 
     public void sendOtp(String email) {
 
@@ -40,8 +50,10 @@ public class OtpService {
         Instant expiry = Instant.now().plus(10, ChronoUnit.MINUTES);
         otpRepo.save(new OtpEntry(null, email, code, expiry));
 
-        String text = String.format("Your OTP is: %d (expires in 10 minutes)", code);
-        emailService.sendSimpleMessage(email, "Your OTP code", text);
+//        String text = String.format("Your OTP is: %d (expires in 10 minutes)", code);
+        String htmlBody = generateOtpEmailHtml(code);
+
+        emailService.sendSimpleMessage(email, "Your OTP code", htmlBody);
     }
 
     @Transactional
