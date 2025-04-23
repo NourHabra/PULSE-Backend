@@ -53,18 +53,15 @@ public class AdminController {
     @PostMapping("/add/admin")
     public ResponseEntity<UserLoginResponse> addAdmin(@RequestBody AdminRegisterDto dto, @RequestHeader("Authorization") String token) {
         try {
-            // Strip out 'Bearer ' if present
+
             String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
 
-            // Get user details from the JWT token
             UserDetails currentAdminDetails = jwtService.getUserFromToken(jwtToken);
 
-            // Validate the token
             if (!jwtService.isTokenValid(jwtToken, currentAdminDetails)) {
                 throw new RuntimeException("Invalid or expired token");
             }
 
-            // Ensure the user has the ADMIN role
             boolean hasAdminRole = currentAdminDetails.getAuthorities()
                     .stream()
                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
@@ -73,7 +70,6 @@ public class AdminController {
                 throw new RuntimeException("You are not authorized to add an admin");
             }
 
-            // Proceed with adding the new admin
             Admin admin = adminService.register(dto);
             activationSvc.sendActivation(admin); // Send activation email
             String newAdminToken = jwtService.generateToken(admin);
@@ -95,13 +91,13 @@ public class AdminController {
     @PostMapping("/login/admin")
     public ResponseEntity<UserLoginResponse> loginAdmin(@RequestBody AdminLoginDto dto) {
         try {
-            Admin admin = adminService.login(dto); // Use login method
-            String token = jwtService.generateToken(admin); // Generate JWT token
+            Admin admin = adminService.login(dto);
+            String token = jwtService.generateToken(admin);
             return ResponseEntity.ok(new UserLoginResponse(
                     "Admin login successful",
                     token,
                     jwtService.getExpirationTime(),
-                    admin // You can include the admin details or remove it if needed
+                    admin
             ));
         } catch (Exception e) {
             return ResponseEntity.status(403).body(new UserLoginResponse(e.getMessage(), null, jwtService.getExpirationTime(), null));

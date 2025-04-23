@@ -13,9 +13,8 @@ public class HealthEmployee extends User {
     @JoinColumn(name = "AuthorizedBy")
     private Admin authorizedBy;
 
-
     public HealthEmployee() {
-        super.setRole("health_employee");
+        super.setRole("Health Employee");
     }
 
     public Admin getAuthorizedBy() {

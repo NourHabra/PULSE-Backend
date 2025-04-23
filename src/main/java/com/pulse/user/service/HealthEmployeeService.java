@@ -33,7 +33,6 @@ public class HealthEmployeeService {
 //            throw new EmailAlreadyExistsException(dto.getEmail());
 //        }
 //
-//        // 🔍 Validate the admin who is authorizing
 //        Admin admin = adminRepository.findById(dto.getAuthorizedByAdminId())
 //                .orElseThrow(() -> new RuntimeException("Authorizing admin not found"));
 //
@@ -57,9 +56,9 @@ public class HealthEmployeeService {
         healthEmployee.setFirstName(dto.getFirstName());
         healthEmployee.setLastName(dto.getLastName());
         healthEmployee.setEmail(dto.getEmail());
-        healthEmployee.setPassword(dto.getPassword());  // Add appropriate password encoding here
+        healthEmployee.setPassword(passwordEncoder.encode(dto.getPassword()));
         healthEmployee.setAuthorizedBy(admin);
-
+        healthEmployee.setRole("Health Employee");
         return healthEmployeeRepository.save(healthEmployee);
     }
 

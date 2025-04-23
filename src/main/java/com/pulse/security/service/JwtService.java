@@ -66,7 +66,7 @@ public class JwtService {
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
     public UserDetails getUserFromToken(String token) {
-        String username = extractUsername(token);  // Assume you have a method to extract username from the token.
+        String username = extractUsername(token);
         if (username != null) {
 
             User user = userRepository.findByEmail(username);

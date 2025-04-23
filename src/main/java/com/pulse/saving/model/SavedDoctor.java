@@ -3,24 +3,24 @@ package com.pulse.saving.model;
 import jakarta.persistence.*;
 import com.pulse.user.model.Patient;
 import com.pulse.user.model.Doctor;
+
 @Entity
-@Table(name = "SavedDoctor")
+@Table(name = "saved_doctor")
 public class SavedDoctor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "SavedDoctorID")
+    @Column(name = "saved_doctorid")
     private Long savedDoctorId;
 
-    @ManyToOne
-    @JoinColumn(name = "PatientID", referencedColumnName = "PatientID")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "patientid", referencedColumnName = "patientid")
     private Patient patient;
 
-    @ManyToOne
-    @JoinColumn(name = "DoctorID", referencedColumnName = "DoctorID")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "doctorid", referencedColumnName = "doctorid")
     private Doctor doctor;
 
-    // Getters and setters
     public Long getSavedDoctorId() {
         return savedDoctorId;
     }
