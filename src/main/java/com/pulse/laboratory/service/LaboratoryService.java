@@ -2,20 +2,65 @@ package com.pulse.laboratory.service;
 
 import com.pulse.laboratory.model.Laboratory;
 import com.pulse.laboratory.repository.LaboratoryRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
+import com.pulse.user.repository.LabTechnicianRepository;
+import com.pulse.user.model.LabTechnician;
 import java.util.List;
 import java.util.Optional;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @Service
 public class LaboratoryService {
-
+    private static final Logger logger = LoggerFactory.getLogger(LaboratoryService.class);
     private final LaboratoryRepository laboratoryRepository;
+    private final LabTechnicianRepository technicianRepository;
 
-    public LaboratoryService(LaboratoryRepository laboratoryRepository) {
+    public LaboratoryService(LaboratoryRepository laboratoryRepository,
+                             LabTechnicianRepository technicianRepository) {
         this.laboratoryRepository = laboratoryRepository;
+        this.technicianRepository = technicianRepository;
     }
 
+
+    @Transactional
+    public Laboratory createLab(Laboratory lab, Long technicianId) {
+        LabTechnician manager = technicianRepository.findById(technicianId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Technician not found with ID: " + technicianId));
+
+
+        lab.setManager(manager);
+        Laboratory savedLab = laboratoryRepository.save(lab);
+
+        manager.setWorkingLab(savedLab);
+        manager.setTechnicianRole("Manager");
+        technicianRepository.save(manager);
+
+        return savedLab;
+    }
+
+
+    @Transactional
+    public LabTechnician addTechnicianToLab(
+            Long labId, Long technicianId, String role
+    ) {
+        Laboratory lab = laboratoryRepository.findById(labId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Laboratory not found with ID: " + labId));
+
+        LabTechnician tech = technicianRepository.findById(technicianId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Technician not found with ID: " + technicianId));
+
+        tech.setWorkingLab(lab);
+        tech.setTechnicianRole(role != null ? role : "Technician");
+        LabTechnician updatedTech = technicianRepository.save(tech);
+        return updatedTech;
+    }
+
+
+//    Old
     // CREATE
     public Laboratory createLab(Laboratory lab) {
         return laboratoryRepository.save(lab);

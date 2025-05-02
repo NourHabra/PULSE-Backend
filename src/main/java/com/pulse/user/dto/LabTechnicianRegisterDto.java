@@ -1,6 +1,9 @@
 package com.pulse.user.dto;
 
 import com.pulse.laboratory.model.Laboratory;
+
+import java.time.LocalDate;
+
 public class LabTechnicianRegisterDto {
 
     private String firstName;
@@ -9,8 +12,15 @@ public class LabTechnicianRegisterDto {
     private String password;
 
     private String licenseNumber;
-    private Long laboratoryId; // FK reference to Laboratory
-    private String technicianRole;
+//    private Long laboratoryId;
+//    private String technicianRole;
+
+    private String gender;
+    private LocalDate dateOfBirth;
+    private String placeOfBirth;
+    private String mobileNumber;
+    private String address;
+    private String pictureUrl;
 
     public LabTechnicianRegisterDto() {}
 
@@ -30,9 +40,54 @@ public class LabTechnicianRegisterDto {
     public String getLicenseNumber() { return licenseNumber; }
     public void setLicenseNumber(String licenseNumber) { this.licenseNumber = licenseNumber; }
 
-    public Long getLaboratoryId() { return laboratoryId; }
-    public void setLaboratoryId(Long laboratoryId) { this.laboratoryId = laboratoryId; }
+//    public Long getLaboratoryId() { return laboratoryId; }
+//    public void setLaboratoryId(Long laboratoryId) { this.laboratoryId = laboratoryId; }
+//
+//    public String getTechnicianRole() { return technicianRole; }
+//    public void setTechnicianRole(String technicianRole) { this.technicianRole = technicianRole; }
 
-    public String getTechnicianRole() { return technicianRole; }
-    public void setTechnicianRole(String technicianRole) { this.technicianRole = technicianRole; }
+
+
+
+    public String getGender() {
+        return gender;
+    }
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getPlaceOfBirth() {
+        return placeOfBirth;
+    }
+    public void setPlaceOfBirth(String placeOfBirth) {
+        this.placeOfBirth = placeOfBirth;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
+    }
 }

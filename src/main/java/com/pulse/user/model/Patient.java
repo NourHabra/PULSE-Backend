@@ -1,6 +1,7 @@
 package com.pulse.user.model;
 
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Lob;
@@ -20,10 +21,10 @@ public class Patient extends User {
     @Column(name = "BloodType")
     private String bloodType;
 
-    @Lob
-    @Column(name = "Fingerprint")
-    private String fingerprint;
-    // or store a URL or some other representation
+//    @Lob
+//    @Column(name = "Fingerprint")
+//    private String fingerprint;
+
 
     public Patient() {
         super.setRole("patient");
@@ -53,11 +54,14 @@ public class Patient extends User {
         this.bloodType = bloodType;
     }
 
-    public String getFingerprint() {
-        return fingerprint;
-    }
+//    public String getFingerprint() {
+//        return fingerprint;
+//    }
+//
+//    public void setFingerprint(String fingerprint) {
+//        this.fingerprint = fingerprint;
+//    }
 
-    public void setFingerprint(String fingerprint) {
-        this.fingerprint = fingerprint;
-    }
+
+
 }

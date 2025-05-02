@@ -31,7 +31,12 @@ public class EmergencyWorkerService {
         worker.setEmail(dto.getEmail());
         worker.setPassword(passwordEncoder.encode(dto.getPassword()));
         worker.setRole("EMERGENCY_WORKER");
-
+        worker.setGender(dto.getGender());
+        worker.setDateOfBirth(dto.getDateOfBirth());
+        worker.setPlaceOfBirth(dto.getPlaceOfBirth());
+        worker.setMobileNumber(dto.getMobileNumber());
+        worker.setAddress(dto.getAddress());
+        worker.setPictureUrl(dto.getPictureUrl());
         worker.setLicenseNumber(dto.getLicenseNumber());
 
         return emergencyWorkerRepository.save(worker);

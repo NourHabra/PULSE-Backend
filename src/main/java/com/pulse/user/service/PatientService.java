@@ -7,19 +7,21 @@ import com.pulse.user.repository.PatientRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.pulse.exception.EmailAlreadyExistsException;
+import com.pulse.fhir.service.FhirPatientService;
 @Service
 public class PatientService {
 
     private final PatientRepository patientRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FhirPatientService fhirPatientService;
 
-    public PatientService(PatientRepository patientRepository, PasswordEncoder passwordEncoder) {
+    public PatientService(PatientRepository patientRepository, PasswordEncoder passwordEncoder, FhirPatientService fhirPatientService) {
         this.patientRepository = patientRepository;
         this.passwordEncoder = passwordEncoder;
+        this.fhirPatientService    = fhirPatientService;
     }
 
     public Patient register(PatientRegisterDto dto) {
-        // ✅ Fix 403: Add email duplication check to avoid serialization failure
         if (patientRepository.findByEmail(dto.getEmail()) != null) {
             throw new EmailAlreadyExistsException(dto.getEmail());
         }
@@ -34,11 +36,17 @@ public class PatientService {
         patient.setHeight(dto.getHeight());
         patient.setWeight(dto.getWeight());
         patient.setBloodType(dto.getBloodType());
+//        patient.setFingerprint(dto.getFingerprint());
+        patient.setGender(dto.getGender());
+        patient.setMobileNumber(dto.getMobileNumber());
+        patient.setDateOfBirth(dto.getDateOfBirth());
+        patient.setPlaceOfBirth(dto.getPlaceOfBirth());
+        patient.setAddress(dto.getAddress());
+        patient.setPictureUrl(dto.getPictureUrl());
 
-        // ✅ Make sure this is Base64 encoded before setting it
-        patient.setFingerprint(dto.getFingerprint());
-
-        return patientRepository.save(patient);
+        Patient saved = patientRepository.save(patient);
+        fhirPatientService.pushToFhir(saved);
+        return saved;
     }
 
     public Patient login(PatientLoginDto dto) {

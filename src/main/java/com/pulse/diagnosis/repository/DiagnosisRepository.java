@@ -1,0 +1,9 @@
+package com.pulse.diagnosis.repository;
+
+
+import com.pulse.diagnosis.model.Diagnosis;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+public interface DiagnosisRepository extends JpaRepository<Diagnosis, Long> {
+    List<Diagnosis> findByMedicalRecordEntry_Patient_UserId(Long patientId);
+}

@@ -19,7 +19,7 @@ public class LabTechnician extends User {
     private Laboratory workingLab;
 
     @Column(name = "TechnicianRole")
-    private String technicianRole; // e.g. "Technician" or "Manager"
+    private String technicianRole;
 
     public LabTechnician() {
         super.setRole("LAB_TECHNICIAN");
@@ -37,7 +37,7 @@ public class LabTechnician extends User {
     public Laboratory getWorkingLab() {
         return workingLab;
     }
-
+    public Long getWorkingLabId(){return workingLab.getLaboratoryId();}
     public void setWorkingLab(Laboratory workingLab) {
         this.workingLab = workingLab;
     }

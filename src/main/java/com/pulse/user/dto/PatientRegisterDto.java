@@ -1,5 +1,7 @@
 package com.pulse.user.dto;
 
+import java.time.LocalDate;
+
 public class PatientRegisterDto {
 
     private String firstName;
@@ -12,8 +14,13 @@ public class PatientRegisterDto {
     private Double weight;
     private String bloodType;
 
-    private String fingerprint;
-
+//    private String fingerprint;
+    private String gender;
+    private LocalDate dateOfBirth;
+    private String placeOfBirth;
+    private String mobileNumber;
+    private String address;
+    private String pictureUrl;
     public PatientRegisterDto() {
     }
 
@@ -68,10 +75,60 @@ public class PatientRegisterDto {
         this.bloodType = bloodType;
     }
 
-    public String getFingerprint() {
-        return fingerprint;
+//    public String getFingerprint() {
+//        return fingerprint;
+//    }
+//    public void setFingerprint(String fingerprint) {
+//        this.fingerprint = fingerprint;
+//    }
+
+    public String getGender() {
+        return gender;
     }
-    public void setFingerprint(String fingerprint) {
-        this.fingerprint = fingerprint;
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getPlaceOfBirth() {
+        return placeOfBirth;
+    }
+
+    public void setPlaceOfBirth(String placeOfBirth) {
+        this.placeOfBirth = placeOfBirth;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
+    }
+
+
 }

@@ -35,7 +35,12 @@ public class DoctorService {
         doctor.setLicenseNumber(dto.getLicenseNumber());
         doctor.setWorkingHours(dto.getWorkingHours());
         doctor.setBiography(dto.getBiography());
-
+        doctor.setGender(dto.getGender());
+        doctor.setDateOfBirth(dto.getDateOfBirth());
+        doctor.setPlaceOfBirth(dto.getPlaceOfBirth());
+        doctor.setMobileNumber(dto.getMobileNumber());
+        doctor.setAddress(dto.getAddress());
+        doctor.setPictureUrl(dto.getPictureUrl());
         return doctorRepository.save(doctor);
     }
 

@@ -42,7 +42,7 @@ public class ActivationService {
         Instant expiry = Instant.now().plus(24, ChronoUnit.HOURS);
         tokenRepo.save(new ActivationToken(null, token, expiry, user));
 
-        String baseUrl = "http://localhost:8080";
+        String baseUrl = "https://localhost:8443";
         String link = baseUrl + "/auth/activate?token=" + token;
 
         String htmlBody = generateActivationEmailHtml(user.getFirstName(), link);

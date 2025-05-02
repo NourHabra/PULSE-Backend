@@ -44,7 +44,12 @@ public class PharmacistService {
         pharmacist.setLicenseNumber(dto.getLicenseNumber());
         pharmacist.setPharmacistRole(dto.getPharmacistRole());
         pharmacist.setWorkingPharmacy(pharmacy);
-
+        pharmacist.setGender(dto.getGender());
+        pharmacist.setMobileNumber(dto.getMobileNumber());
+        pharmacist.setDateOfBirth(dto.getDateOfBirth());
+        pharmacist.setPlaceOfBirth(dto.getPlaceOfBirth());
+        pharmacist.setAddress(dto.getAddress());
+        pharmacist.setPictureUrl(dto.getPictureUrl());
         return pharmacistRepository.save(pharmacist);
     }
 

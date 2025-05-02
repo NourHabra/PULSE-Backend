@@ -15,7 +15,8 @@ import org.springframework.context.annotation.Bean;
         "com.pulse.pharmacy.model",
         "com.pulse.laboratory.model",
         "com.pulse.email.model",
-        "com.pulse.saving.model"
+        "com.pulse.saving.model",
+        "com.pulse"
 })
 public class PulseApplication {
 

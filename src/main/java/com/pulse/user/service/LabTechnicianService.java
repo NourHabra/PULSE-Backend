@@ -32,11 +32,6 @@ public class LabTechnicianService {
             throw new EmailAlreadyExistsException(dto.getEmail());
         }
 
-
-        Laboratory lab = laboratoryRepository.findById(dto.getLaboratoryId())
-                .orElseThrow(() -> new RuntimeException("Laboratory not found"));
-
-
         LabTechnician technician = new LabTechnician();
         technician.setFirstName(dto.getFirstName());
         technician.setLastName(dto.getLastName());
@@ -45,9 +40,15 @@ public class LabTechnicianService {
         technician.setRole("LAB_TECHNICIAN");
 
         technician.setLicenseNumber(dto.getLicenseNumber());
-        technician.setTechnicianRole(dto.getTechnicianRole());
-        technician.setWorkingLab(lab);
 
+
+
+        technician.setGender(dto.getGender());
+        technician.setDateOfBirth(dto.getDateOfBirth());
+        technician.setPlaceOfBirth(dto.getPlaceOfBirth());
+        technician.setMobileNumber(dto.getMobileNumber());
+        technician.setAddress(dto.getAddress());
+        technician.setPictureUrl(dto.getPictureUrl());
         return labTechnicianRepository.save(technician);
     }
 

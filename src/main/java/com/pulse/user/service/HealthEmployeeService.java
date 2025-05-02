@@ -59,6 +59,12 @@ public class HealthEmployeeService {
         healthEmployee.setPassword(passwordEncoder.encode(dto.getPassword()));
         healthEmployee.setAuthorizedBy(admin);
         healthEmployee.setRole("Health Employee");
+        healthEmployee.setGender(dto.getGender());
+        healthEmployee.setDateOfBirth(dto.getDateOfBirth());
+        healthEmployee.setPlaceOfBirth(dto.getPlaceOfBirth());
+        healthEmployee.setMobileNumber(dto.getMobileNumber());
+        healthEmployee.setAddress(dto.getAddress());
+        healthEmployee.setPictureUrl(dto.getPictureUrl());
         return healthEmployeeRepository.save(healthEmployee);
     }
 

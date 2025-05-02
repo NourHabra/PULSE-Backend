@@ -31,6 +31,12 @@ public class AdminService {
         admin.setEmail(dto.getEmail());
         admin.setPassword(passwordEncoder.encode(dto.getPassword()));
         admin.setRole("ADMIN");
+        admin.setGender(dto.getGender());
+        admin.setDateOfBirth(dto.getDateOfBirth());
+        admin.setPlaceOfBirth(dto.getPlaceOfBirth());
+        admin.setMobileNumber(dto.getMobileNumber());
+        admin.setAddress(dto.getAddress());
+        admin.setPictureUrl(dto.getPictureUrl());
 
         return adminRepository.save(admin);
     }
