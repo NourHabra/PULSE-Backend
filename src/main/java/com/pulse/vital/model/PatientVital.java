@@ -6,9 +6,7 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 import com.pulse.user.model.Patient;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Entity
 @Table(name = "patient_vital")
 public class PatientVital {
@@ -26,4 +24,45 @@ public class PatientVital {
 
     private String measurement;
     private LocalDateTime timestamp;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
+    public Vital getVital() {
+        return vital;
+    }
+
+    public void setVital(Vital vital) {
+        this.vital = vital;
+    }
+
+    public String getMeasurement() {
+        return measurement;
+    }
+
+    public void setMeasurement(String measurement) {
+        this.measurement = measurement;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
 }

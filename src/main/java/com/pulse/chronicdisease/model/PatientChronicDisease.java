@@ -7,9 +7,7 @@ import java.time.LocalDate;
 import java.io.Serializable;
 import com.pulse.user.model.Patient;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Entity
 @Table(name = "patient_chronic_disease")
 public class PatientChronicDisease {
@@ -27,4 +25,45 @@ public class PatientChronicDisease {
 
     private String intensity;
     private LocalDate startDate;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
+    public ChronicDisease getChronicDisease() {
+        return chronicDisease;
+    }
+
+    public void setChronicDisease(ChronicDisease chronicDisease) {
+        this.chronicDisease = chronicDisease;
+    }
+
+    public String getIntensity() {
+        return intensity;
+    }
+
+    public void setIntensity(String intensity) {
+        this.intensity = intensity;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
 }
