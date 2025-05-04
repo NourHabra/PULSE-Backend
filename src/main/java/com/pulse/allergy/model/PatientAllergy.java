@@ -2,7 +2,7 @@ package com.pulse.allergy.model;
 
 
 import jakarta.persistence.*;
-import lombok.*;
+
 import java.io.Serializable;
 import com.pulse.user.model.Patient;
 

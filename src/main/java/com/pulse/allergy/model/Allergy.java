@@ -1,7 +1,7 @@
 package com.pulse.allergy.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+
 
 
 @Entity

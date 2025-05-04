@@ -2,7 +2,7 @@ package com.pulse.chronicdisease.model;
 
 
 import jakarta.persistence.*;
-import lombok.*;
+
 import java.time.LocalDate;
 import java.io.Serializable;
 import com.pulse.user.model.Patient;

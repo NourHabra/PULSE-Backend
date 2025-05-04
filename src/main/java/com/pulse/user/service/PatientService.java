@@ -56,4 +56,9 @@ public class PatientService {
         }
         return patient;
     }
+
+
+    public Patient getPatientByEmail(String email) {
+        return patientRepository.findByEmail(email);
+    }
 }

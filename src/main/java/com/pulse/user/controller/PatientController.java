@@ -20,7 +20,7 @@ public class PatientController {
     private final JwtService jwtService;
     private final ActivationService activationSvc;
 
-    public PatientController(PatientService patientService, JwtService jwtService,ActivationService activationSvc) {
+    public PatientController(PatientService patientService, JwtService jwtService, ActivationService activationSvc) {
         this.patientService = patientService;
         this.jwtService = jwtService;
         this.activationSvc = activationSvc;
@@ -55,11 +55,12 @@ public class PatientController {
 
 
     @GetMapping("/profile/patient")
-    public ResponseEntity<UserLoginResponse> getPatientProfile(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.startsWith("Bearer ")
-                ? authHeader.substring(7)
-                : authHeader;
-        UserDetails user = jwtService.getUserFromToken(token);
+    public ResponseEntity<UserLoginResponse> getPatientProfile(@RequestHeader("Authorization") String token) {
+
+        String jwttoken = token.startsWith("Bearer ")
+                ? token.substring(7)
+                : token;
+        UserDetails user = jwtService.getUserFromToken(jwttoken);
 
         if (user != null && user instanceof Patient) {
             Patient patient = (Patient) user;
@@ -82,4 +83,8 @@ public class PatientController {
             ));
         }
     }
+
 }
+
+
+

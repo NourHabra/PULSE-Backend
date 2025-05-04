@@ -1,7 +1,7 @@
 package com.pulse.chronicdisease.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+
 
 
 @Entity

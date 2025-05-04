@@ -1,7 +1,7 @@
 package com.pulse.vital.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+
 
 
 @Entity

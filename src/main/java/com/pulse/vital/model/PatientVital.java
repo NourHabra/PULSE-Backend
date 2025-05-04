@@ -1,7 +1,6 @@
 package com.pulse.vital.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 import com.pulse.user.model.Patient;

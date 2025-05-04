@@ -2,7 +2,7 @@ package com.pulse.user.model;
 
 
 import jakarta.persistence.*;
-import lombok.*;
+
 
 
 @Entity
