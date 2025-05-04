@@ -6,7 +6,9 @@ import com.pulse.user.dto.PatientLoginDto;
 import com.pulse.user.dto.UserLoginResponse;
 import com.pulse.user.model.Patient;
 import com.pulse.user.service.PatientService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.pulse.email.service.ActivationService;
 
@@ -49,5 +51,35 @@ public class PatientController {
                 jwtService.getExpirationTime(),
                 patient
         ));
+    }
+
+
+    @GetMapping("/profile/patient")
+    public ResponseEntity<UserLoginResponse> getPatientProfile(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.startsWith("Bearer ")
+                ? authHeader.substring(7)
+                : authHeader;
+        UserDetails user = jwtService.getUserFromToken(token);
+
+        if (user != null && user instanceof Patient) {
+            Patient patient = (Patient) user;
+            String tokenResponse = jwtService.generateToken(patient);
+
+
+            return ResponseEntity.ok(new UserLoginResponse(
+                    "Patient profile fetched successfully",
+                    tokenResponse,
+                    jwtService.getExpirationTime(),
+                    patient
+            ));
+        } else {
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new UserLoginResponse(
+                    "Unauthorized access",
+                    null,
+                    null,
+                    null
+            ));
+        }
     }
 }

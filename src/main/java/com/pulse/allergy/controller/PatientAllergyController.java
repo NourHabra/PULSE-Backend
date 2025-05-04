@@ -1,6 +1,7 @@
 package com.pulse.allergy.controller;
 
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
@@ -13,6 +14,14 @@ public class PatientAllergyController {
 
     @Autowired
     private PatientAllergyService service;
+
+
+//    @GetMapping("/me")
+//    @PreAuthorize("hasRole('PATIENT')")
+//    public List<PatientAllergyDto> getMine(@AuthenticationPrincipal Jwt jwt) {
+//        Long patientId = jwt.getClaim("userId");
+//        return service.getByPatientId(patientId);
+//    }
 
     @GetMapping("/patient/{patientId}")
     public List<PatientAllergyDto> getByPatient(@PathVariable Long patientId) {
