@@ -1,6 +1,12 @@
 package com.pulse.vital.controller;
 
 
+import com.pulse.allergy.dto.PatientAllergyDto;
+import com.pulse.security.service.JwtService;
+import com.pulse.user.model.Patient;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
@@ -13,6 +19,28 @@ import com.pulse.vital.service.PatientVitalService;
 public class PatientVitalController {
     @Autowired
     private PatientVitalService service;
+    @Autowired
+    private JwtService jwtService;
+
+    @GetMapping("/me")
+    public ResponseEntity<List<PatientVitalDto>> getMine(
+            @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.startsWith("Bearer ")
+                ? authHeader.substring(7)
+                : authHeader;
+
+        UserDetails user = jwtService.getUserFromToken(token);
+
+        if (user instanceof Patient patient) {
+
+            List<PatientVitalDto> result = service.getByPatientId(patient.getUserId());
+
+            return ResponseEntity.ok(result);
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
 
     @GetMapping("/patient/{patientId}")
     public List<PatientVitalDto> getByPatient(@PathVariable Long patientId) {
