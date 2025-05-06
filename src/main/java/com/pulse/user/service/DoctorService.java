@@ -47,6 +47,12 @@ public class DoctorService {
         doctor.setMobileNumber(dto.getMobileNumber());
         doctor.setAddress(dto.getAddress());
         doctor.setPictureUrl(dto.getPictureUrl());
+
+        String coords = dto.getCoordinates().trim();
+        if (!coords.startsWith("https://www.google.com/maps/place/")) {
+            coords = "https://www.google.com/maps/place/" + coords;
+        }
+        doctor.setCoordinates(coords);
         return doctorRepository.save(doctor);
     }
 

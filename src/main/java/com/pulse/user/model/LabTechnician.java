@@ -1,5 +1,7 @@
 package com.pulse.user.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pulse.laboratory.model.Laboratory;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -14,7 +16,7 @@ public class LabTechnician extends User {
     private String licenseNumber;
 
     @ManyToOne
-    @JoinColumn(name = "WorkingLabID")
+    @JoinColumn(name = "WorkingLabID", nullable = true)
     @JsonBackReference
     private Laboratory workingLab;
 
@@ -37,7 +39,9 @@ public class LabTechnician extends User {
     public Laboratory getWorkingLab() {
         return workingLab;
     }
-    public Long getWorkingLabId(){return workingLab.getLaboratoryId();}
+    @JsonProperty("laboratoryId")                      // serialise as simple field
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public Long getWorkingLabId(){return workingLab != null ? workingLab.getLaboratoryId() : null;}
     public void setWorkingLab(Laboratory workingLab) {
         this.workingLab = workingLab;
     }

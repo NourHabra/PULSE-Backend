@@ -10,7 +10,7 @@ public class FeaturedDoctorDto {
     private String pictureUrl;
     private String specialization;
 
-
+    private String coordinates;
     public Long getId()              { return id; }
     public void setId(Long id)       { this.id = id; }
 
@@ -23,12 +23,16 @@ public class FeaturedDoctorDto {
     public String getSpecialization() { return specialization; }
     public void setSpecialization(String specialization) { this.specialization = specialization; }
 
+    public String getCoordinates()          { return coordinates; }
+    public void setCoordinates(String c)    { this.coordinates = c; }
+
     public static FeaturedDoctorDto fromEntity(Doctor d) {
         FeaturedDoctorDto dto = new FeaturedDoctorDto();
         dto.setId(d.getUserId());
         dto.setFullName(d.getFirstName() + " " + d.getLastName());
         dto.setPictureUrl(d.getPictureUrl());
         dto.setSpecialization(d.getSpecialization());
+        dto.setCoordinates(d.getCoordinates());
         return dto;
     }
 }

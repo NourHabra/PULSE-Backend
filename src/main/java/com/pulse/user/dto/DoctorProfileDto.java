@@ -19,6 +19,7 @@ public class DoctorProfileDto {
     private String mobileNumber;
     private String address;
     private String pictureUrl;
+    private String coordinates;
 
     public DoctorProfileDto() { }
 
@@ -36,7 +37,8 @@ public class DoctorProfileDto {
                             String placeOfBirth,
                             String mobileNumber,
                             String address,
-                            String pictureUrl) {
+                            String pictureUrl,
+                            String coordinates) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -51,6 +53,7 @@ public class DoctorProfileDto {
         this.mobileNumber = mobileNumber;
         this.address = address;
         this.pictureUrl = pictureUrl;
+        this.coordinates = coordinates;
     }
 
 
@@ -97,6 +100,9 @@ public class DoctorProfileDto {
     public String getPictureUrl() { return pictureUrl; }
     public void setPictureUrl(String pictureUrl) { this.pictureUrl = pictureUrl; }
 
+    public String getCoordinates() { return coordinates; }
+    public void setCoordinates(String coordinates) { this.coordinates = coordinates; }
+
     public static DoctorProfileDto fromEntity(Doctor d) {
         DoctorProfileDto dto = new DoctorProfileDto();
         dto.setId(d.getUserId());
@@ -113,6 +119,7 @@ public class DoctorProfileDto {
         dto.setMobileNumber(d.getMobileNumber());
         dto.setAddress(d.getAddress());
         dto.setPictureUrl(d.getPictureUrl());
+        dto.setCoordinates(d.getCoordinates());
         return dto;
     }
 }

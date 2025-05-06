@@ -20,7 +20,8 @@ public class Doctor extends User {
 
     @Column(name = "Biography")
     private String biography;
-
+    @Column(name = "Coordinates")
+    private String coordinates;
     public Doctor() {
         // Optional: Set role = "doctor" by default
         super.setRole("doctor");
@@ -57,5 +58,13 @@ public class Doctor extends User {
 
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    public String getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(String coordinates) {
+        this.coordinates = coordinates;
     }
 }

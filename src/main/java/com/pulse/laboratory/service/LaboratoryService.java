@@ -15,6 +15,10 @@ public class LaboratoryService {
     private static final Logger logger = LoggerFactory.getLogger(LaboratoryService.class);
     private final LaboratoryRepository laboratoryRepository;
     private final LabTechnicianRepository technicianRepository;
+    private static final String MAPS_PREFIX = "https://www.google.com/maps/place/";
+
+
+
 
     public LaboratoryService(LaboratoryRepository laboratoryRepository,
                              LabTechnicianRepository technicianRepository) {
@@ -31,6 +35,7 @@ public class LaboratoryService {
 
 
         lab.setManager(manager);
+        lab.setLocationCoordinates(asMapsLink(lab.getLocationCoordinates()));
         Laboratory savedLab = laboratoryRepository.save(lab);
 
         manager.setWorkingLab(savedLab);
@@ -85,7 +90,7 @@ public class LaboratoryService {
             existing.setManager(updatedLab.getManager());
             existing.setPhone(updatedLab.getPhone());
             existing.setAddress(updatedLab.getAddress());
-            existing.setLocationCoordinates(updatedLab.getLocationCoordinates());
+            existing.setLocationCoordinates(asMapsLink(updatedLab.getLocationCoordinates()));
             return laboratoryRepository.save(existing);
         }).orElseThrow(() -> new RuntimeException("Laboratory not found with ID: " + id));
     }
@@ -96,5 +101,11 @@ public class LaboratoryService {
             throw new RuntimeException("Laboratory not found with ID: " + id);
         }
         laboratoryRepository.deleteById(id);
+    }
+
+    private String asMapsLink(String coords) {
+        if (coords == null) return null;
+        coords = coords.trim();
+        return coords.startsWith(MAPS_PREFIX) ? coords : MAPS_PREFIX + coords;
     }
 }

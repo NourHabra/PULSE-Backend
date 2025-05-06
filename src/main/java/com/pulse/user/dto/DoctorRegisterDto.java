@@ -13,7 +13,7 @@ public class DoctorRegisterDto {
     private String licenseNumber;
     private String workingHours;
     private String biography;
-
+    private String coordinates;
     private String gender;
     private LocalDate dateOfBirth;
     private String placeOfBirth;
@@ -123,5 +123,10 @@ public class DoctorRegisterDto {
     public void setPictureUrl(String pictureUrl) {
         this.pictureUrl = pictureUrl;
     }
+
+    public String getCoordinates() { return coordinates; }
+    public void setCoordinates(String coordinates) { this.coordinates = coordinates; }
+
+
 
 }
