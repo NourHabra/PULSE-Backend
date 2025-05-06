@@ -2,7 +2,7 @@ package com.pulse.allergy.model;
 
 import jakarta.persistence.*;
 
-
+//test comment for github
 
 @Entity
 @Table(name = "allergy")
