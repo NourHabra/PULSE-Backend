@@ -8,7 +8,7 @@ public class FeaturedDoctorDto {
     private Long id;
     private String fullName;
     private String pictureUrl;
-
+    private String specialization;
 
 
     public Long getId()              { return id; }
@@ -20,13 +20,15 @@ public class FeaturedDoctorDto {
     public String getPictureUrl()    { return pictureUrl; }
     public void setPictureUrl(String u){ this.pictureUrl = u; }
 
-
+    public String getSpecialization() { return specialization; }
+    public void setSpecialization(String specialization) { this.specialization = specialization; }
 
     public static FeaturedDoctorDto fromEntity(Doctor d) {
         FeaturedDoctorDto dto = new FeaturedDoctorDto();
         dto.setId(d.getUserId());
         dto.setFullName(d.getFirstName() + " " + d.getLastName());
         dto.setPictureUrl(d.getPictureUrl());
+        dto.setSpecialization(d.getSpecialization());
         return dto;
     }
 }
