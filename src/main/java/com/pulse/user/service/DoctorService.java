@@ -13,6 +13,7 @@ import com.pulse.exception.EmailAlreadyExistsException;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DoctorService {
@@ -78,4 +79,31 @@ public class DoctorService {
                         new EntityNotFoundException("Doctor id " + id));
         return DoctorProfileDto.fromEntity(d);
     }
+
+    public List<DoctorProfileDto> getAllDoctors() {
+        List<Doctor> doctors = doctorRepository.findAll();
+        return doctors.stream()
+                .map(DoctorProfileDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+
+    public String convertToEmbedLink(String coordinatesLink) {
+        if (coordinatesLink == null || !coordinatesLink.startsWith("https://www.google.com/maps/place/")) {
+            throw new IllegalArgumentException("Invalid coordinates link format");
+        }
+
+        String coords = coordinatesLink.replace("https://www.google.com/maps/place/", "");
+
+        return "https://www.google.com/maps?q=" + coords + "&z=15&output=embed";
+    }
+    public String getDoctorCoordinatesEmbedLink(Long id) {
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Doctor not found with ID: " + id));
+        String coordinatesLink = doctor.getCoordinates();
+
+        return convertToEmbedLink(coordinatesLink);
+    }
+
+
 }

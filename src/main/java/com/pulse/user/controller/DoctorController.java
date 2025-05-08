@@ -67,4 +67,16 @@ public class DoctorController {
     public ResponseEntity<DoctorProfileDto> doctorById(@PathVariable Long id) {
         return ResponseEntity.ok(doctorService.getDoctorProfile(id));
     }
+
+    @GetMapping("/{id}/coordinates/embed")
+    public ResponseEntity<String> getDoctorCoordinatesEmbedLink(@PathVariable Long id) {
+        String embedLink = doctorService.getDoctorCoordinatesEmbedLink(id);
+        return ResponseEntity.ok(embedLink);
+    }
+
+    @GetMapping("/doctors")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<List<DoctorProfileDto>> getAllDoctors() {
+        return ResponseEntity.ok(doctorService.getAllDoctors());
+    }
 }

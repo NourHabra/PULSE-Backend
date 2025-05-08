@@ -136,4 +136,14 @@ public class LaboratoryController {
         laboratoryService.deleteLab(id);
         return ResponseEntity.noContent().build();
     }
+
+
+    @GetMapping("/{id}/coordinates/embed")
+    public ResponseEntity<String> getLabCoordinatesEmbedLink(@PathVariable Long id) {
+
+        String embedLink = laboratoryService.getLaboratoryCoordinatesEmbedLink(id);
+
+
+        return ResponseEntity.ok(embedLink);
+    }
 }

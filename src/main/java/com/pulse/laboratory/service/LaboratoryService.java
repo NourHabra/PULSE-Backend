@@ -108,4 +108,26 @@ public class LaboratoryService {
         coords = coords.trim();
         return coords.startsWith(MAPS_PREFIX) ? coords : MAPS_PREFIX + coords;
     }
+
+
+
+
+    public String convertToEmbedLink(String coordinatesLink) {
+        if (coordinatesLink == null || !coordinatesLink.startsWith("https://www.google.com/maps/place/")) {
+            throw new IllegalArgumentException("Invalid coordinates link format");
+        }
+
+        String coords = coordinatesLink.replace("https://www.google.com/maps/place/", "");
+
+        return "https://www.google.com/maps?q=" + coords + "&z=15&output=embed";
+    }
+
+    public String getLaboratoryCoordinatesEmbedLink(Long id) {
+
+        Laboratory laboratory = laboratoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Laboratory not found with ID: " + id));
+        String coordinatesLink = laboratory.getLocationCoordinates();
+
+        return convertToEmbedLink(coordinatesLink);
+    }
 }
