@@ -1,53 +1,66 @@
 package com.pulse.fhir.service;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import org.springframework.stereotype.Service;
-import org.hl7.fhir.r4.model.IdType;
-import org.springframework.beans.factory.annotation.Value;
 import com.pulse.fhir.mapper.PatientFhirMapper;
 import com.pulse.user.model.Patient;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 
 @Service
 public class FhirPatientService {
-
+    private final FhirContext fhirContext;
     private final IGenericClient client;
+    private final FhirValidationService validationService;
 
-    public FhirPatientService(FhirContext ctx,
-                              @Value("${fhir.base-url}") String serverUrl) {
-        this.client = ctx.newRestfulGenericClient(serverUrl);
-    }
-    public MethodOutcome createInFhir(Patient patient){
-        return client.create()
-                .resource(PatientFhirMapper.toFhir(patient))
-                .execute();
-    }
+    @Autowired
+    public FhirPatientService(FhirValidationService validationService) {
+        this.validationService = validationService;
+        this.fhirContext = FhirContext.forR4();
+        this.client = fhirContext.newRestfulGenericClient("http://hapi.fhir.org/baseR4");
 
-    /* ---------- create / update ---------- */
-    public MethodOutcome pushToFhir(Patient patient) {
-        org.hl7.fhir.r4.model.Patient fp = PatientFhirMapper.toFhir(patient);
-
-        // PUT /Patient/{18}  → create-or-update
-        return client
-                .update()
-                .resource(fp)
-                .execute();
+        // Add logging interceptor
+        LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
+        loggingInterceptor.setLogRequestBody(true);
+        loggingInterceptor.setLogResponseBody(true);
+        client.registerInterceptor(loggingInterceptor);
     }
 
+    public void pushToFhir(Patient patient) {
+        org.hl7.fhir.r4.model.Patient fhirPatient = PatientFhirMapper.toFhir(patient);
 
-    /* ---------- read ---------- */
-    public org.hl7.fhir.r4.model.Patient fetchFromFhir(String id) {
-        return client.read()
+        // Validate the FHIR resource
+        if (!validationService.isValid(fhirPatient)) {
+            String validationMessages = validationService.getValidationMessages(fhirPatient);
+            throw new RuntimeException("Invalid FHIR Patient resource: " + validationMessages);
+        }
+
+        // Create or update the patient in the FHIR server
+        if (fhirPatient.getIdElement() != null && !fhirPatient.getIdElement().isEmpty()) {
+            client.update()
+                    .resource(fhirPatient)
+                    .execute();
+        } else {
+            client.create()
+                    .resource(fhirPatient)
+                    .execute();
+        }
+    }
+
+    public Patient getFromFhir(String fhirId) {
+        org.hl7.fhir.r4.model.Patient fhirPatient = client.read()
                 .resource(org.hl7.fhir.r4.model.Patient.class)
-                .withId(id)
+                .withId(fhirId)
                 .execute();
+
+        return PatientFhirMapper.fromFhir(fhirPatient);
     }
 
-    /* ---------- delete ---------- */
-    public MethodOutcome deleteFromFhir(String id) {
-        return client.delete()
-                .resourceById(new IdType("Patient", id))  // <-- correct form
+    public void deleteFromFhir(String fhirId) {
+        client.delete()
+                .resourceById("Patient", fhirId)
                 .execute();
     }
 }

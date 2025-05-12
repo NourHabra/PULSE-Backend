@@ -141,19 +141,19 @@
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-base</artifactId>
-            <version>6.2.0</version>
+            <version>6.8.5</version>
         </dependency>
 
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-structures-r4</artifactId>
-            <version>6.2.0</version>
+            <version>6.8.5</version>
         </dependency>
 
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-validation-resources-r4</artifactId>
-            <version>8.0.0</version>
+            <artifactId>hapi-fhir-validation</artifactId>
+            <version>6.8.5</version>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>ca.uhn.hapi.fhir</groupId>-->
