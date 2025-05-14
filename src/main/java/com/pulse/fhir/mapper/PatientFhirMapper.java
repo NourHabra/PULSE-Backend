@@ -2,91 +2,64 @@ package com.pulse.fhir.mapper;
 
 import com.pulse.user.model.Patient;
 import org.hl7.fhir.r4.model.*;
+import org.springframework.stereotype.Component;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
 
-public class PatientFhirMapper {
-    public static org.hl7.fhir.r4.model.Patient toFhir(com.pulse.user.model.Patient p) {
-        org.hl7.fhir.r4.model.Patient fp = new org.hl7.fhir.r4.model.Patient();
+@Component
+public class PatientFhirMapper implements FhirMapper<Patient, org.hl7.fhir.r4.model.Patient> {
 
-        // Required FHIR fields
-        fp.setId("pat-" + p.getUserId());
+    @Override
+    public org.hl7.fhir.r4.model.Patient toFhir(Patient patient) {
+        org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
 
-        // Add identifier with system and value
-        Identifier identifier = new Identifier();
-        identifier.setSystem("http://pulse.com/identifiers/patient");
-        identifier.setValue(p.getEmail());
-        fp.addIdentifier(identifier);
+        // Set basic information
+        fhirPatient.setId("pat-" + patient.getUserId());
 
-        // Human name with proper structure
+        // Set name
         HumanName name = new HumanName();
-        name.setFamily(p.getLastName());
-        name.addGiven(p.getFirstName());
         name.setUse(HumanName.NameUse.OFFICIAL);
-        fp.addName(name);
+        name.setFamily(patient.getLastName());
+        name.addGiven(patient.getFirstName());
+        fhirPatient.addName(name);
 
-        // Gender with proper FHIR enum
-        if (p.getGender() != null) {
-            fp.setGender(Enumerations.AdministrativeGender.fromCode(
-                    p.getGender().toLowerCase()));
+        // Set gender
+        if (patient.getGender() != null) {
+            fhirPatient.setGender(Enumerations.AdministrativeGender.valueOf(patient.getGender().toUpperCase()));
         }
 
-        // Birth date
-        if (p.getDateOfBirth() != null) {
-            Date dob = Date.from(
-                    p.getDateOfBirth()
-                            .atStartOfDay(ZoneId.systemDefault())
-                            .toInstant());
-            fp.setBirthDate(dob);
+        // Set birth date
+        if (patient.getDateOfBirth() != null) {
+            fhirPatient.setBirthDate(Date.from(patient.getDateOfBirth()
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toInstant()));
         }
 
-        // Contact information
-        if (p.getMobileNumber() != null) {
-            ContactPoint telecom = new ContactPoint();
-            telecom.setSystem(ContactPoint.ContactPointSystem.PHONE);
-            telecom.setValue(p.getMobileNumber());
-            telecom.setUse(ContactPoint.ContactPointUse.MOBILE);
-            fp.addTelecom(telecom);
-        }
-
-        // Address
-        if (p.getAddress() != null) {
+        // Set address
+        if (patient.getAddress() != null) {
             Address address = new Address();
-            address.setText(p.getAddress());
             address.setUse(Address.AddressUse.HOME);
-            fp.addAddress(address);
+            address.setType(Address.AddressType.PHYSICAL);
+            address.setText(patient.getAddress());
+            fhirPatient.addAddress(address);
         }
 
-        // Photo
-        if (p.getPictureUrl() != null) {
-            Attachment photo = new Attachment();
-            photo.setUrl(p.getPictureUrl());
-            photo.setContentType("image/jpeg");
-            fp.setPhoto(List.of(photo));
+        // Set phone
+        if (patient.getMobileNumber() != null) {
+            ContactPoint phone = new ContactPoint();
+            phone.setSystem(ContactPoint.ContactPointSystem.PHONE);
+            phone.setValue(patient.getMobileNumber());
+            phone.setUse(ContactPoint.ContactPointUse.MOBILE);
+            fhirPatient.addTelecom(phone);
         }
 
-        // Add extension for custom fields
-        if (p.getHeight() != null) {
-            Extension heightExt = new Extension();
-            heightExt.setUrl("http://pulse.com/fhir/StructureDefinition/height");
-            heightExt.setValue(new DecimalType(p.getHeight()));
-            fp.addExtension(heightExt);
-        }
-
-        if (p.getWeight() != null) {
-            Extension weightExt = new Extension();
-            weightExt.setUrl("http://pulse.com/fhir/StructureDefinition/weight");
-            weightExt.setValue(new DecimalType(p.getWeight()));
-            fp.addExtension(weightExt);
-        }
-
-        if (p.getBloodType() != null) {
-            Extension bloodTypeExt = new Extension();
-            bloodTypeExt.setUrl("http://pulse.com/fhir/StructureDefinition/bloodType");
-            bloodTypeExt.setValue(new StringType(p.getBloodType()));
-            fp.addExtension(bloodTypeExt);
+        // Set email
+        if (patient.getEmail() != null) {
+            ContactPoint email = new ContactPoint();
+            email.setSystem(ContactPoint.ContactPointSystem.EMAIL);
+            email.setValue(patient.getEmail());
+            email.setUse(ContactPoint.ContactPointUse.HOME);
+            fhirPatient.addTelecom(email);
         }
 
         // Add meta information
@@ -94,81 +67,68 @@ public class PatientFhirMapper {
         meta.setVersionId("1");
         meta.setLastUpdated(new Date());
         meta.addProfile("http://hl7.org/fhir/StructureDefinition/Patient");
-        fp.setMeta(meta);
+        fhirPatient.setMeta(meta);
 
-        return fp;
+        return fhirPatient;
     }
 
-    public static com.pulse.user.model.Patient fromFhir(org.hl7.fhir.r4.model.Patient fp) {
-        com.pulse.user.model.Patient p = new com.pulse.user.model.Patient();
+    @Override
+    public Patient fromFhir(org.hl7.fhir.r4.model.Patient fhirPatient) {
+        Patient patient = new Patient();
 
-        // Extract identifier
-        if (!fp.getIdentifier().isEmpty()) {
-            p.setEmail(fp.getIdentifierFirstRep().getValue());
+        // Extract ID
+        if (fhirPatient.getId() != null) {
+            patient.setUserId(Long.parseLong(fhirPatient.getId().replace("pat-", "")));
         }
 
         // Extract name
-        if (!fp.getName().isEmpty()) {
-            HumanName name = fp.getNameFirstRep();
-            p.setLastName(name.getFamily());
-            if (!name.getGiven().isEmpty()) {
-                p.setFirstName(name.getGiven().get(0).getValue());
+        if (!fhirPatient.getName().isEmpty()) {
+            HumanName name = fhirPatient.getNameFirstRep();
+            if (name.hasGiven()) {
+                patient.setFirstName(name.getGivenAsSingleString());
+            }
+            if (name.hasFamily()) {
+                patient.setLastName(name.getFamily());
             }
         }
 
         // Extract gender
-        if (fp.hasGender()) {
-            p.setGender(fp.getGender().toCode());
+        if (fhirPatient.hasGender()) {
+            patient.setGender(fhirPatient.getGender().toCode());
         }
 
         // Extract birth date
-        if (fp.hasBirthDate()) {
-            p.setDateOfBirth(fp.getBirthDate().toInstant()
+        if (fhirPatient.hasBirthDate()) {
+            patient.setDateOfBirth(fhirPatient.getBirthDate().toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate());
         }
 
-        // Extract contact information
-        if (!fp.getTelecom().isEmpty()) {
-            for (ContactPoint telecom : fp.getTelecom()) {
+        // Extract address
+        if (!fhirPatient.getAddress().isEmpty()) {
+            patient.setAddress(fhirPatient.getAddressFirstRep().getText());
+        }
+
+        // Extract phone
+        if (!fhirPatient.getTelecom().isEmpty()) {
+            for (ContactPoint telecom : fhirPatient.getTelecom()) {
                 if (telecom.getSystem() == ContactPoint.ContactPointSystem.PHONE) {
-                    p.setMobileNumber(telecom.getValue());
+                    patient.setMobileNumber(telecom.getValue());
                     break;
                 }
             }
         }
 
-        // Extract address
-        if (!fp.getAddress().isEmpty()) {
-            p.setAddress(fp.getAddressFirstRep().getText());
-        }
-
-        // Extract photo
-        if (!fp.getPhoto().isEmpty()) {
-            p.setPictureUrl(fp.getPhotoFirstRep().getUrl());
-        }
-
-        // Extract extensions
-        for (Extension ext : fp.getExtension()) {
-            switch (ext.getUrl()) {
-                case "http://pulse.com/fhir/StructureDefinition/height":
-                    if (ext.getValue() instanceof DecimalType) {
-                        p.setHeight(((DecimalType) ext.getValue()).getValue().doubleValue());
-                    }
+        // Extract email
+        if (!fhirPatient.getTelecom().isEmpty()) {
+            for (ContactPoint telecom : fhirPatient.getTelecom()) {
+                if (telecom.getSystem() == ContactPoint.ContactPointSystem.EMAIL) {
+                    patient.setEmail(telecom.getValue());
                     break;
-                case "http://pulse.com/fhir/StructureDefinition/weight":
-                    if (ext.getValue() instanceof DecimalType) {
-                        p.setWeight(((DecimalType) ext.getValue()).getValue().doubleValue());
-                    }
-                    break;
-                case "http://pulse.com/fhir/StructureDefinition/bloodType":
-                    if (ext.getValue() instanceof StringType) {
-                        p.setBloodType(((StringType) ext.getValue()).getValue());
-                    }
-                    break;
+                }
             }
         }
 
-        return p;
+        return patient;
     }
 }
