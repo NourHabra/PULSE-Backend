@@ -11,8 +11,8 @@ public class FhirValidationService {
     private final FhirContext fhirContext;
     private final FhirValidator validator;
 
-    public FhirValidationService() {
-        this.fhirContext = FhirContext.forR4();
+    public FhirValidationService(FhirContext fhirContext) {
+        this.fhirContext = fhirContext;
         this.validator = fhirContext.newValidator();
     }
 
