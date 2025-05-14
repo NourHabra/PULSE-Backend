@@ -8,6 +8,12 @@ public abstract class FhirResourceMixin {
     @JsonIgnore
     public abstract void setReferenceElement(org.hl7.fhir.instance.model.api.IIdType value);
 
+    @JsonIgnore
+    public abstract void setReferenceElement(org.hl7.fhir.r4.model.StringType value);
+
     @JsonProperty("reference")
     public abstract void setReference(String value);
+
+    @JsonProperty("reference")
+    public abstract String getReference();
 }
