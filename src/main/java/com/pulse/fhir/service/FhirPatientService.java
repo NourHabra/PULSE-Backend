@@ -80,14 +80,7 @@ public class FhirPatientService {
         dto.setAddress(patient.getAddress());
         dto.setPictureUrl(patient.getPictureUrl());
 
-        // Register the patient
-        Patient savedPatient = patientService.register(dto);
-
-        // Convert to FHIR and validate
-        org.hl7.fhir.r4.model.Patient fhirPatient = pushToFhir(savedPatient);
-
-        // Return the saved patient
-        return savedPatient;
+        return patientService.register(dto);
     }
 
     public void deleteFromFhir(String fhirId) {
