@@ -1,5 +1,6 @@
 package com.pulse.fhir.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -23,8 +24,15 @@ public class FhirJacksonConfig {
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+        // Configure deserialization features
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+
         // Add mixin to handle FHIR Reference class
         mapper.addMixIn(Reference.class, FhirResourceMixin.class);
+
+        // Add mixin for Resource class to handle resourceType
+        mapper.addMixIn(Resource.class, ResourceMixin.class);
 
         converter.setObjectMapper(mapper);
 
