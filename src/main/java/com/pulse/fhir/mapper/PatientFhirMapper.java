@@ -9,6 +9,8 @@ import java.util.Date;
 @Component
 public class PatientFhirMapper implements FhirMapper<Patient, org.hl7.fhir.r4.model.Patient> {
 
+    private static final String PASSWORD_EXTENSION_URL = "http://pulse.com/fhir/StructureDefinition/password";
+
     @Override
     public org.hl7.fhir.r4.model.Patient toFhir(Patient patient) {
         org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
@@ -60,6 +62,14 @@ public class PatientFhirMapper implements FhirMapper<Patient, org.hl7.fhir.r4.mo
             email.setValue(patient.getEmail());
             email.setUse(ContactPoint.ContactPointUse.HOME);
             fhirPatient.addTelecom(email);
+        }
+
+        // Set password as extension
+        if (patient.getPassword() != null) {
+            Extension passwordExtension = new Extension();
+            passwordExtension.setUrl(PASSWORD_EXTENSION_URL);
+            passwordExtension.setValue(new StringType(patient.getPassword()));
+            fhirPatient.addExtension(passwordExtension);
         }
 
         // Add meta information
@@ -126,6 +136,14 @@ public class PatientFhirMapper implements FhirMapper<Patient, org.hl7.fhir.r4.mo
                     patient.setEmail(telecom.getValue());
                     break;
                 }
+            }
+        }
+
+        // Get password from extension
+        if (fhirPatient.hasExtension(PASSWORD_EXTENSION_URL)) {
+            Extension passwordExtension = fhirPatient.getExtensionByUrl(PASSWORD_EXTENSION_URL);
+            if (passwordExtension.hasValue() && passwordExtension.getValue() instanceof StringType) {
+                patient.setPassword(((StringType) passwordExtension.getValue()).getValue());
             }
         }
 
