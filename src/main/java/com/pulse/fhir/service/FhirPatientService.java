@@ -36,16 +36,25 @@ public class FhirPatientService {
 
         try {
             if (!validationService.isValid(fhirPatient)) {
-                throw new InvalidRequestException("Invalid FHIR Patient resource");
+                String validationMessage = validationService.getValidationMessages(fhirPatient);
+                throw new InvalidRequestException("Invalid FHIR Patient resource: " + validationMessage);
             }
             return fhirPatient;
         } catch (Exception e) {
-            throw new InvalidRequestException("Error validating FHIR Patient resource: " + e.getMessage());
+            throw new InvalidRequestException("Error processing FHIR Patient resource: " + e.getMessage());
         }
     }
 
     public Patient fromFhir(org.hl7.fhir.r4.model.Patient fhirPatient) {
-        return patientFhirMapper.fromFhir(fhirPatient);
+        try {
+            if (!validationService.isValid(fhirPatient)) {
+                String validationMessage = validationService.getValidationMessages(fhirPatient);
+                throw new InvalidRequestException("Invalid FHIR Patient resource: " + validationMessage);
+            }
+            return patientFhirMapper.fromFhir(fhirPatient);
+        } catch (Exception e) {
+            throw new InvalidRequestException("Error processing FHIR Patient resource: " + e.getMessage());
+        }
     }
 
     public void deleteFromFhir(String fhirId) {
