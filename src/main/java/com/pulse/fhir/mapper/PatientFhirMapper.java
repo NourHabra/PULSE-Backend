@@ -139,10 +139,10 @@ public class PatientFhirMapper implements FhirMapper<Patient, org.hl7.fhir.r4.mo
             }
         }
 
-        // Get password from extension
+        // Extract password from extension
         if (fhirPatient.hasExtension(PASSWORD_EXTENSION_URL)) {
             Extension passwordExtension = fhirPatient.getExtensionByUrl(PASSWORD_EXTENSION_URL);
-            if (passwordExtension.hasValue() && passwordExtension.getValue() instanceof StringType) {
+            if (passwordExtension != null && passwordExtension.hasValue()) {
                 patient.setPassword(((StringType) passwordExtension.getValue()).getValue());
             }
         }
