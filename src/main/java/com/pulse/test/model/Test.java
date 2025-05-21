@@ -20,16 +20,25 @@ public class Test {
     private String description;
 
     private String normalValues;
+    @Column(length = 2048)
+    private String image;
 
     public Test() {}
 
-    public Test(Long testId, String name, String type, String description, String normalValues) {
+    public Test(Long testId,
+                String name,
+                String type,
+                String description,
+                String normalValues,
+                String image) {
         this.testId = testId;
         this.name = name;
         this.type = type;
         this.description = description;
         this.normalValues = normalValues;
+        this.image = image;
     }
+
 
     public Long getTestId() {
         return testId;
@@ -69,5 +78,13 @@ public class Test {
 
     public void setNormalValues(String normalValues) {
         this.normalValues = normalValues;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

@@ -7,18 +7,18 @@ import com.pulse.user.repository.PatientRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.pulse.exception.EmailAlreadyExistsException;
-import com.pulse.fhir.service.FhirPatientService;
+
 @Service
 public class PatientService {
 
     private final PatientRepository patientRepository;
     private final PasswordEncoder passwordEncoder;
-    private final FhirPatientService fhirPatientService;
 
-    public PatientService(PatientRepository patientRepository, PasswordEncoder passwordEncoder, FhirPatientService fhirPatientService) {
+
+    public PatientService(PatientRepository patientRepository, PasswordEncoder passwordEncoder) {
         this.patientRepository = patientRepository;
         this.passwordEncoder = passwordEncoder;
-        this.fhirPatientService    = fhirPatientService;
+
     }
 
     public Patient register(PatientRegisterDto dto) {
@@ -45,7 +45,7 @@ public class PatientService {
         patient.setPictureUrl(dto.getPictureUrl());
 
         Patient saved = patientRepository.save(patient);
-        fhirPatientService.pushToFhir(saved);
+//        fhirPatientService.pushToFhir(saved);
         return saved;
     }
 
