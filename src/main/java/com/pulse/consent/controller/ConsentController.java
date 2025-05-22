@@ -71,8 +71,9 @@ public class ConsentController {
 
         Long doctorId = ((com.pulse.user.model.Doctor) doctorDetails).getUserId();
         Consent c = consentSvc.requestConsent(patientId, doctorId);
-
-        pushSvc.notifyPatientConsentPending(patientId, c.getId(), doctorId);   //  ← now compiles
+        System.out.println("Before notification");
+        pushSvc.notifyPatientConsentPending(patientId, c.getId(), doctorId);
+        System.out.println("After notification");
         return ResponseEntity.status(HttpStatus.CREATED).body(c);
     }
 

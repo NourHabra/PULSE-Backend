@@ -14,33 +14,31 @@ public class WebSocketPushService {
         this.broker = broker;
     }
 
-    /* doctor → patient : “please approve” */
-    public void notifyPatientConsentPending(Long patientId,
-                                            Long consentId,
-                                            Long doctorId) {
+    public void notifyPatientConsentPending(Long patientId, Long consentId, Long doctorId) {
+        ConsentNotification n = new ConsentNotification();
+        n.setType("CONSENT_REQUEST");
+        n.setConsentId(consentId);
+        n.setDoctorId(doctorId);
 
-        ConsentNotification msg = new ConsentNotification();
-        msg.setType("CONSENT_REQUEST");
-        msg.setConsentId(consentId);
-        msg.setDoctorId(doctorId);
-        msg.setPatientId(patientId);
-
-        broker.convertAndSend("/topic/patient." + patientId, msg);
+        broker.convertAndSendToUser(                // “user” = Principal.name = patientId
+                patientId.toString(),
+                "/queue/patient.consents",
+                n
+        );
     }
 
-    /* patient → doctor : “approved / denied” */
-    public void notifyDoctorConsentResult(Long doctorId,
-                                          Long consentId,
-                                          Long patientId,
-                                          String status) {
+    public void notifyDoctorConsentResult(Long doctorId, Long consentId,
+                                          Long patientId, String status) {
+        ConsentNotification n = new ConsentNotification();
+        n.setType("CONSENT_RESULT");
+        n.setConsentId(consentId);
+        n.setPatientId(patientId);
+        n.setStatus(status);
 
-        ConsentNotification msg = new ConsentNotification();
-        msg.setType("CONSENT_RESULT");
-        msg.setConsentId(consentId);
-        msg.setDoctorId(doctorId);
-        msg.setPatientId(patientId);
-        msg.setStatus(status);          // ACTIVE or REJECTED
-
-        broker.convertAndSend("/topic/doctor." + doctorId, msg);
+        broker.convertAndSendToUser(
+                doctorId.toString(),
+                "/queue/doctor.consents",
+                n
+        );
     }
 }
