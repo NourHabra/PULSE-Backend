@@ -2,6 +2,7 @@ package com.pulse.consent.service;
 
 import com.pulse.consent.model.*;
 import com.pulse.consent.repository.ConsentRepository;
+import com.pulse.exception.ConsentAlreadyPendingException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
@@ -25,23 +26,37 @@ public class ConsentService {
     }
 
 
-    /* Doctor creates request */
     @Transactional
     public Consent requestConsent(Long patientId, Long doctorId) {
 
         return repo.findByPatientIdAndDoctorId(patientId, doctorId)
-                .filter(c -> c.getStatus() == ConsentStatus.REVOKED
-                        || c.getStatus() == ConsentStatus.REJECTED)
                 .map(c -> {
-                    c.setStatus(ConsentStatus.PENDING);
-                    c.setRequestedAt(Instant.now());
-                    return repo.save(c);
+
+
+                    if (c.getStatus() == ConsentStatus.PENDING) {
+                        throw new ConsentAlreadyPendingException(patientId);
+                    }
+
+                    if (c.getStatus() == ConsentStatus.REVOKED
+                            || c.getStatus() == ConsentStatus.REJECTED) {
+
+                        c.setStatus(ConsentStatus.PENDING);
+                        c.setRequestedAt(Instant.now());
+                        return repo.save(c);
+                    }
+
+
+                    return c;
                 })
-                .orElseGet(() -> repo.save(
-                        new Consent(patientId, doctorId,
-                                ConsentStatus.PENDING, Instant.now())
-                ));
+                .orElseGet(() ->           
+                        repo.save(new Consent(
+                                patientId,
+                                doctorId,
+                                ConsentStatus.PENDING,
+                                Instant.now()
+                        )));
     }
+
 
 
     @Transactional

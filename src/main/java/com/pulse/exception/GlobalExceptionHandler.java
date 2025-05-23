@@ -21,6 +21,12 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("WrongPassword", ex.getMessage()));
     }
 
+    @ExceptionHandler(ConsentAlreadyPendingException.class)
+    public ResponseEntity<String> handlePending(ConsentAlreadyPendingException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)        // 409
+                .body(ex.getMessage());             // "Waiting for patient …"
+    }
 
     public static class ErrorResponse {
         private String error;
