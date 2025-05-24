@@ -5,13 +5,16 @@ import com.pulse.prescription.dto.PrescriptionRequest;
 import com.pulse.prescription.model.Prescription;
 import com.pulse.prescription.service.PrescriptionService;
 import com.pulse.user.model.Doctor;
+import com.pulse.user.model.Patient;
 import com.pulse.user.repository.DoctorRepository;
 import com.pulse.security.service.JwtService;
 import com.pulse.medicalrecord.model.MedicalRecordEntry;
 
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,5 +82,29 @@ public class PrescriptionController {
 
                 List<Prescription> list = service.findAllByPatientId(patientId);
         return ResponseEntity.ok(list);
+    }
+
+
+
+    @PreAuthorize("hasRole('PATIENT')")
+    @GetMapping("/patient/me")
+    public ResponseEntity<List<Prescription>> listMyPrescription( @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.startsWith("Bearer ")
+                ? authHeader.substring(7)
+                : authHeader;
+
+        UserDetails userDetails = jwtService.getUserFromToken(token);
+        if (!jwtService.isTokenValid(token, userDetails)) {
+            throw new RuntimeException("Invalid or expired JWT");
+        }
+        if (userDetails instanceof Patient patient)
+        {
+            List<Prescription> list = service.findAllByPatientId(patient.getUserId());
+            return ResponseEntity.ok(list);
+        }
+
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

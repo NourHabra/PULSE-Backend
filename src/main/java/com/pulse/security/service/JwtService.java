@@ -75,6 +75,12 @@ public class JwtService {
         return null;
     }
 
+    public Long extractUserId(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("id", Long.class);
+    }
+
+
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());

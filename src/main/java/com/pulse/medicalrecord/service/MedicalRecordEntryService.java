@@ -17,7 +17,6 @@ public class MedicalRecordEntryService {
         this.repo = repo;
     }
 
-    /** used by controller to create the MRE **/
     public MedicalRecordEntry create(MedicalRecordEntry entry) {
         return repo.save(entry);
     }

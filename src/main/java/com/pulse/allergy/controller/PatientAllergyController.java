@@ -1,6 +1,8 @@
 package com.pulse.allergy.controller;
 
 
+import com.pulse.allergy.repository.PatientAllergyRepository;
+import com.pulse.consent.security.ConsentGuard;
 import com.pulse.security.service.JwtService;
 import com.pulse.user.model.Patient;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +16,8 @@ import com.pulse.allergy.service.PatientAllergyService;
 import com.pulse.allergy.dto.PatientAllergyDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/testing/patient-allergies")
 public class PatientAllergyController {
@@ -22,6 +26,10 @@ public class PatientAllergyController {
     private PatientAllergyService service;
     @Autowired
     private  JwtService jwtService;
+    @Autowired
+    private ConsentGuard consentGuard;
+    @Autowired
+    private PatientAllergyRepository patientAllergyRepository;
 
     @GetMapping("/me")
     public ResponseEntity<List<PatientAllergyDto>> getMine(
@@ -44,14 +52,20 @@ public class PatientAllergyController {
     }
 
 
+    @PreAuthorize("@consentGuard.canRead(#patientId)")
     @GetMapping("/patient/{patientId}")
     public List<PatientAllergyDto> getByPatient(@PathVariable Long patientId) {
         return service.getByPatientId(patientId);
     }
 
 
+
     @PostMapping
     public PatientAllergy create(@RequestBody PatientAllergy pa) {
+        Long patientId = pa.getPatient().getUserId();
+        if (!consentGuard.canRead(patientId)) {
+            throw new AccessDeniedException("You are not authorized to see this data");
+        }
         return service.create(pa);
     }
 
@@ -59,10 +73,28 @@ public class PatientAllergyController {
 
     @PutMapping("/{id}")
     public PatientAllergyDto update(@PathVariable Long id, @RequestBody PatientAllergy pa) {
+        PatientAllergy existing = patientAllergyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "PatientAllergy not found"));
+
+        Long patientId = existing.getPatient().getUserId();
+        if (!consentGuard.canRead(patientId)) {
+            throw new AccessDeniedException("You are not authorized to see this data");
+        }
+
+
         return service.update(id, pa);
     }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
+        PatientAllergy existing = patientAllergyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "PatientAllergy not found"));
+
+        Long patientId = existing.getPatient().getUserId();
+        if (!consentGuard.canRead(patientId)) {
+            throw new AccessDeniedException("You are not authorized to see this data");
+        }
         service.delete(id);
     }
+
 }

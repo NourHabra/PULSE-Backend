@@ -6,6 +6,7 @@ import com.pulse.emergencyevent.model.EmergencyEvent;
 import com.pulse.emergencyevent.service.EmergencyEventService;
 import com.pulse.medicalrecord.model.MedicalRecordEntry;
 import com.pulse.medicalrecord.service.MedicalRecordEntryService;
+import com.pulse.prescription.model.Prescription;
 import com.pulse.user.model.EmergencyWorker;
 import com.pulse.user.model.Patient;
 import com.pulse.user.repository.EmergencyWorkerRepository;
@@ -13,8 +14,10 @@ import com.pulse.security.service.JwtService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -104,5 +107,27 @@ public class EmergencyEventController {
         }
         List<EmergencyEvent> list = eventService.findAllByPatientId(patientId);
         return ResponseEntity.ok(list);
+    }
+
+    @PreAuthorize("hasRole('PATIENT')")
+    @GetMapping("/patient/me")
+    public ResponseEntity<List<EmergencyEvent>> listMyEvents(@RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.startsWith("Bearer ")
+                ? authHeader.substring(7)
+                : authHeader;
+
+        UserDetails userDetails = jwtService.getUserFromToken(token);
+        if (!jwtService.isTokenValid(token, userDetails)) {
+            throw new RuntimeException("Invalid or expired JWT");
+        }
+        if (userDetails instanceof Patient patient)
+        {
+            List<EmergencyEvent> list = eventService.findAllByPatientId(patient.getUserId());
+            return ResponseEntity.ok(list);
+        }
+
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }
