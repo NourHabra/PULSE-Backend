@@ -4,6 +4,7 @@ package com.pulse.emergencyevent.service;
 
 import com.pulse.emergencyevent.model.EmergencyEvent;
 import com.pulse.emergencyevent.repository.EmergencyEventRepository;
+import com.pulse.prescription.model.Prescription;
 import org.springframework.stereotype.Service;
 import com.pulse.medicalrecord.repository.MedicalRecordEntryRepository;
 import com.pulse.user.model.EmergencyWorker;
@@ -43,4 +44,9 @@ public class EmergencyEventService {
     public List<EmergencyEvent> findAllByPatientId(Long patientId) {
         return eventRepo.findByMedicalRecordEntry_Patient_UserId(patientId);
     }
+
+    public EmergencyEvent findById(Long id) {
+        return eventRepo.findById(id).orElse(null);
+    }
+
 }

@@ -84,6 +84,27 @@ public class PrescriptionController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("/{prescriptionId}")
+    public ResponseEntity<Prescription> getById(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long prescriptionId) {
+
+        String token = authHeader.startsWith("Bearer ")
+                ? authHeader.substring(7)
+                : authHeader;
+
+        UserDetails userDetails = jwtService.getUserFromToken(token);
+        if (!jwtService.isTokenValid(token, userDetails)) {
+            throw new RuntimeException("Invalid or expired JWT");
+        }
+
+
+        Prescription presc = service.findById(prescriptionId);
+        if (presc == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(presc);
+    }
 
 
     @PreAuthorize("hasRole('PATIENT')")

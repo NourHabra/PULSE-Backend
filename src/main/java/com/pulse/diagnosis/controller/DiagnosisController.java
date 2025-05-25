@@ -101,6 +101,28 @@ public class DiagnosisController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("/{eventId}")
+    public ResponseEntity<Diagnosis> getById(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long eventId) {
+
+        String token = authHeader.startsWith("Bearer ")
+                ? authHeader.substring(7)
+                : authHeader;
+
+        UserDetails userDetails = jwtService.getUserFromToken(token);
+        if (!jwtService.isTokenValid(token, userDetails)) {
+            throw new RuntimeException("Invalid or expired JWT");
+        }
+
+
+        Diagnosis diagnosis = diagnosisService.findById(eventId);
+        if (diagnosis == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(diagnosis);
+    }
+
     @PreAuthorize("hasRole('PATIENT')")
     @GetMapping("/patient/me")
     public ResponseEntity<List<Diagnosis>> listMyDiagnosis(@RequestHeader("Authorization") String authHeader) {

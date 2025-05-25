@@ -3,6 +3,7 @@ package com.pulse.diagnosis.service;
 
 import com.pulse.diagnosis.model.Diagnosis;
 import com.pulse.diagnosis.repository.DiagnosisRepository;
+import com.pulse.emergencyevent.model.EmergencyEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,5 +35,9 @@ public class DiagnosisService {
 
     public List<Diagnosis> findAllByPatientId(Long patientId) {
         return diagRepo.findByMedicalRecordEntry_Patient_UserId(patientId);
+    }
+
+    public Diagnosis findById(Long id) {
+        return diagRepo.findById(id).orElse(null);
     }
 }

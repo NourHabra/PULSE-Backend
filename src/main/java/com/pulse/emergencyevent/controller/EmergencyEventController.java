@@ -109,6 +109,28 @@ public class EmergencyEventController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EmergencyEvent> getById(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long eventId) {
+
+        String token = authHeader.startsWith("Bearer ")
+                ? authHeader.substring(7)
+                : authHeader;
+
+        UserDetails userDetails = jwtService.getUserFromToken(token);
+        if (!jwtService.isTokenValid(token, userDetails)) {
+            throw new RuntimeException("Invalid or expired JWT");
+        }
+
+
+        EmergencyEvent event = eventService.findById(eventId);
+        if (event == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(event);
+    }
+
     @PreAuthorize("hasRole('PATIENT')")
     @GetMapping("/patient/me")
     public ResponseEntity<List<EmergencyEvent>> listMyEvents(@RequestHeader("Authorization") String authHeader) {

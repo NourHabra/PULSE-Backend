@@ -32,4 +32,9 @@ public class PrescriptionService {
     public List<Prescription> findAllByPatientId(Long patientId) {
         return prescRepo.findByMedicalRecordEntry_Patient_UserId(patientId);
     }
+
+    public Prescription findById(Long id) {
+        return prescRepo.findById(id).orElse(null);
+    }
+
 }
