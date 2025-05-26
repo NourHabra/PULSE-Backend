@@ -13,6 +13,7 @@ import com.pulse.medicalrecord.repository.MedicalRecordEntryRepository;
 import com.pulse.user.model.Doctor;
 import com.pulse.user.repository.DoctorRepository;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 
 @Service
@@ -39,5 +40,8 @@ public class DiagnosisService {
 
     public Diagnosis findById(Long id) {
         return diagRepo.findById(id).orElse(null);
+    }
+    public Optional<Diagnosis> findByMreId(Long mreId) {
+        return diagRepo.findByMedicalRecordEntry_MedicalRecordEntryId(mreId);
     }
 }

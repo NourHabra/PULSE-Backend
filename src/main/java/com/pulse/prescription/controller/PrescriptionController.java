@@ -128,4 +128,36 @@ public class PrescriptionController {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    @PreAuthorize("hasRole('DOCTOR')")
+    @PostMapping("/mre/{mreId}")
+    public ResponseEntity<Prescription> addPrescriptionToMre(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long mreId,
+            @RequestBody PrescriptionRequest dto) {
+
+        String token = authHeader.startsWith("Bearer ")
+                ? authHeader.substring(7)
+                : authHeader;
+
+        UserDetails userDetails = jwtService.getUserFromToken(token);
+        if (!jwtService.isTokenValid(token, userDetails)) {
+            throw new RuntimeException("Invalid or expired JWT");
+        }
+        Doctor doctor = doctorRepo.findByEmail(userDetails.getUsername());
+        if (doctor == null) {
+            throw new AccessDeniedException("You are not a Doctor");
+        }
+
+        Prescription presc = new Prescription();
+        presc.setNotes(dto.getNotes());
+        presc.setStatus(dto.getStatus());
+        presc.setDoctor(doctor);
+        Prescription saved = service.addToMre(mreId, presc);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(saved);
+    }
+
 }

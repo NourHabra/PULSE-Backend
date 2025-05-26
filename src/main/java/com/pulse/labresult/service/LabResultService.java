@@ -1,6 +1,7 @@
 package com.pulse.labresult.service;
 
 
+import com.pulse.emergencyevent.model.EmergencyEvent;
 import com.pulse.labresult.model.LabResult;
 import com.pulse.labresult.repository.LabResultRepository;
 import com.pulse.medicalrecord.repository.MedicalRecordEntryRepository;
@@ -8,6 +9,7 @@ import com.pulse.medicalrecord.model.MedicalRecordEntry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LabResultService {
@@ -33,5 +35,9 @@ public class LabResultService {
 
     public List<LabResult> findAllByPatientId(Long patientId) {
         return repo.findByMedicalRecordEntry_Patient_UserId(patientId);
+    }
+
+    public Optional<LabResult> findByMreId(Long mreId) {
+        return repo.findByMedicalRecordEntry_MedicalRecordEntryId(mreId);
     }
 }
