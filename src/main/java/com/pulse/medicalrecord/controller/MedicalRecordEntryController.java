@@ -79,7 +79,7 @@ public class MedicalRecordEntryController {
         return ResponseEntity.ok(dtos);
     }
 
-    @PreAuthorize("hasRole('DOCTOR') or @consentGuard.canReadByEntryId(#entryId)")
+
     @GetMapping("/{entryId}")
     public ResponseEntity<MedicalRecordEntryDTO> getMreWithDetails(
             @PathVariable Long entryId

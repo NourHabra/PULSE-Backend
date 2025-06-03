@@ -10,7 +10,7 @@ import com.pulse.email.repository.OtpEntryRepository;
 import com.pulse.user.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 
-@RestController
+@RestController("emailAuthController")
 @RequestMapping("/auth")
 public class AuthController {
 
