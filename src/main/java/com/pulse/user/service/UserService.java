@@ -1,15 +1,16 @@
 package com.pulse.user.service;
 
+import com.pulse.user.dto.LoginRequest;
 import com.pulse.user.model.User;
-import com.pulse.user.repository.AdminRepository;
-import com.pulse.user.repository.PatientRepository;
-import com.pulse.user.repository.DoctorRepository;
-import com.pulse.user.repository.PharmacistRepository;
-import com.pulse.user.repository.EmergencyWorkerRepository;
-import com.pulse.user.repository.LabTechnicianRepository;
-import com.pulse.user.repository.HealthEmployeeRepository;
+import com.pulse.user.repository.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -25,13 +26,19 @@ public class UserService {
     private final LabTechnicianRepository labTechnicianRepo;
     private final HealthEmployeeRepository healthEmployeeRepo;
 
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+
+
     public UserService(AdminRepository adminRepo,
                        DoctorRepository doctorRepo,
                        PatientRepository patientRepo,
                        PharmacistRepository pharmacistRepo,
                        EmergencyWorkerRepository emergencyWorkerRepo,
                        LabTechnicianRepository labTechnicianRepo,
-                       HealthEmployeeRepository healthEmployeeRepo) {
+                       HealthEmployeeRepository healthEmployeeRepo,
+                       UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.adminRepo = adminRepo;
         this.doctorRepo = doctorRepo;
         this.patientRepo = patientRepo;
@@ -39,6 +46,8 @@ public class UserService {
         this.emergencyWorkerRepo = emergencyWorkerRepo;
         this.labTechnicianRepo = labTechnicianRepo;
         this.healthEmployeeRepo = healthEmployeeRepo;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Optional<User> findByEmail(String email) {
@@ -71,5 +80,12 @@ public class UserService {
                 .map(Optional::get)
                 .findFirst();
     }
+    public User login(LoginRequest loginRequest) {
 
+        User user = userRepository.findByEmail(loginRequest.getEmail());
+        if (user == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+        return user;
+    }
 }

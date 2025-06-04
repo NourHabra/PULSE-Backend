@@ -48,39 +48,42 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
-            Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
-            User user = userService.findByEmail(loginRequest.getEmail())
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            User user = userService.login(loginRequest);
 
             otpService.sendOtp(user.getEmail());
 
             return ResponseEntity.ok(Map.of(
                     "message", "OTP sent to your email. Please verify to complete login.",
                     "userId", user.getUserId()));
-        } catch (AuthenticationException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }
 
+
     @PostMapping("/login/verify-otp")
-    public ResponseEntity<?> verifyOtp(@RequestBody OtpVerificationRequest otpRequest) {
+    public ResponseEntity<UserLoginResponse> verifyOtp(@RequestBody OtpVerificationRequest otpRequest) {
         try {
             otpService.verifyOtp(otpRequest.getEmail(), otpRequest.getOtp());
 
             User user = userService.findByEmail(otpRequest.getEmail())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("role", user.getRole());
+            String token = jwtService.generateToken(user);
 
-            String token = jwtService.generateToken(claims, user);
-
-            return ResponseEntity.ok(Map.of("token", token));
+            return ResponseEntity.ok(new UserLoginResponse(
+                    "Login successful! OTP verified.",
+                    token,
+                    jwtService.getExpirationTime(),
+                    user
+            ));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new UserLoginResponse("OTP verification failed.", null, null, null)
+            );
         }
     }
+
 
 }

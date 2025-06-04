@@ -25,7 +25,6 @@ public class MedicalRecordEntry {
     public MedicalRecordEntry() {
     }
 
-    // All-args constructor
     public MedicalRecordEntry(Long medicalRecordEntryId, String title, LocalDateTime timestamp, Patient patient) {
         this.medicalRecordEntryId = medicalRecordEntryId;
         this.title = title;
@@ -33,7 +32,6 @@ public class MedicalRecordEntry {
         this.patient = patient;
     }
 
-    // Getters and setters
     public Long getMedicalRecordEntryId() {
         return medicalRecordEntryId;
     }

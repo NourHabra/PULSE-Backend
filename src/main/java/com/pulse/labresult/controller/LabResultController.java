@@ -1,6 +1,7 @@
 package com.pulse.labresult.controller;
 
 
+import com.pulse.diagnosis.model.Diagnosis;
 import com.pulse.labresult.model.LabResult;
 import com.pulse.labresult.dto.LabResultRequest;
 import com.pulse.labresult.service.LabResultService;
@@ -14,7 +15,9 @@ import com.pulse.user.model.LabTechnician;
 import com.pulse.user.model.Patient;
 import com.pulse.user.repository.LabTechnicianRepository;
 import com.pulse.security.service.JwtService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,20 +48,40 @@ public class LabResultController {
         this.jwtService = jwtService;
     }
 
-    // 1) Get all results for patient
+
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<LabResult>> byPatient(@PathVariable Long patientId) {
         List<LabResult> list = service.findAllByPatientId(patientId);
         return ResponseEntity.ok(list);
     }
+    @PreAuthorize("hasRole('PATIENT')")
+    @GetMapping("/patient/me")
+    public ResponseEntity<List<LabResult>> listMyResults(@RequestHeader("Authorization") String authHeader) {
 
-    // 2) Get one by ID
+        String token = authHeader.startsWith("Bearer ")
+                ? authHeader.substring(7)
+                : authHeader;
+
+        UserDetails userDetails = jwtService.getUserFromToken(token);
+        if (!jwtService.isTokenValid(token, userDetails)) {
+            throw new RuntimeException("Invalid or expired JWT");
+        }
+        if (userDetails instanceof Patient patient)
+        {
+            List<LabResult> list = service.findAllByPatientId(patient.getUserId());
+            return ResponseEntity.ok(list);
+        }
+
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<LabResult> byId(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
-    // 3) Add new LabResult (technician only)
+
     @PostMapping("/add")
     public ResponseEntity<LabResult> addLabResult(
             @RequestHeader("Authorization") String authHeader,

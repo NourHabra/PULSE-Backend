@@ -68,8 +68,8 @@ public class MedicalRecordEntryController {
                     prescriptionService.findByMreId(mre.getMedicalRecordEntryId())
                             .ifPresent(dto::setPrescription);
 
-                    labResultService.findByMreId(mre.getMedicalRecordEntryId())
-                            .ifPresent(dto::setLabResult);
+//                    labResultService.findByMreId(mre.getMedicalRecordEntryId())
+//                            .ifPresent(dto::setLabResult);
 
                     return dto;
                 })
@@ -106,8 +106,8 @@ public class MedicalRecordEntryController {
         prescriptionService.findByMreId(mre.getMedicalRecordEntryId())
                 .ifPresent(dto::setPrescription);
 
-        labResultService.findByMreId(mre.getMedicalRecordEntryId())
-                .ifPresent(dto::setLabResult);
+//        labResultService.findByMreId(mre.getMedicalRecordEntryId())
+//                .ifPresent(dto::setLabResult);
 
         return dto;
     }
@@ -140,8 +140,8 @@ public class MedicalRecordEntryController {
                         prescriptionService.findByMreId(mre.getMedicalRecordEntryId())
                                 .ifPresent(dto::setPrescription);
 
-                        labResultService.findByMreId(mre.getMedicalRecordEntryId())
-                                .ifPresent(dto::setLabResult);
+//                        labResultService.findByMreId(mre.getMedicalRecordEntryId())
+//                                .ifPresent(dto::setLabResult);
 
                         return dto;
                     })

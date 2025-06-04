@@ -16,7 +16,7 @@ public class MedicalRecordEntryDTO {
     private Diagnosis       diagnosis;
     private EmergencyEvent  emergencyEvent;
     private Prescription    prescription;
-    private LabResult       labResult;
+//    private LabResult       labResult;
 
     public MedicalRecordEntryDTO(MedicalRecordEntry mre) {
         this.entryId   = mre.getMedicalRecordEntryId();
@@ -82,12 +82,12 @@ public class MedicalRecordEntryDTO {
         this.prescription = prescription;
     }
 
-    public LabResult getLabResult() {
-        return labResult;
-    }
-
-    public void setLabResult(LabResult labResult) {
-        this.labResult = labResult;
-    }
+//    public LabResult getLabResult() {
+//        return labResult;
+//    }
+//
+//    public void setLabResult(LabResult labResult) {
+//        this.labResult = labResult;
+//    }
 
 }
