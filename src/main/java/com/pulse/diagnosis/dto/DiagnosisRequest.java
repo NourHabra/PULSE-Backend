@@ -2,26 +2,26 @@ package com.pulse.diagnosis.dto;
 
 
 public class DiagnosisRequest {
-    private String officialDiagnosis;
+    private String attachment;
     private String description;
-    private String followUps;
+    private String ICD10;
     private String mreTitle;
     private Long patientId;
 
     public DiagnosisRequest() {}
-    public DiagnosisRequest(String officialDiagnosis, String description, String followUps, String mreTitle, Long patientId) {
-        this.officialDiagnosis = officialDiagnosis;
+    public DiagnosisRequest(String attachment, String description, String ICD10, String mreTitle, Long patientId) {
+        this.attachment = attachment;
         this.description = description;
-        this.followUps = followUps;
+        this.ICD10 = ICD10;
         this.mreTitle = mreTitle;
         this.patientId = patientId;
     }
-    public String getOfficialDiagnosis() { return officialDiagnosis; }
-    public void setOfficialDiagnosis(String officialDiagnosis) { this.officialDiagnosis = officialDiagnosis; }
+    public String getOfficialDiagnosis() { return attachment; }
+    public void setOfficialDiagnosis(String attachment) { this.attachment = attachment; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public String getFollowUps() { return followUps; }
-    public void setFollowUps(String followUps) { this.followUps = followUps; }
+    public String getFollowUps() { return ICD10; }
+    public void setFollowUps(String ICD10) { this.ICD10 = ICD10; }
     public String getMreTitle() { return mreTitle; }
     public void setMreTitle(String mreTitle) { this.mreTitle = mreTitle; }
     public Long getPatientId() { return patientId; }

@@ -16,13 +16,13 @@ public class Diagnosis {
 
 
     @Column(length = 2000)
-    private String officialDiagnosis;
+    private String attachment;
 
     @Column(length = 5000)
     private String description;
 
     @Column(length = 2000)
-    private String followUps;
+    private String ICD10;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "medical_record_entry_id", nullable = false)
@@ -35,12 +35,12 @@ public class Diagnosis {
     public Diagnosis() {
     }
 
-    public Diagnosis(Long diagnosisId,  String officialDiagnosis, String description, String followUps, MedicalRecordEntry medicalRecordEntry, Doctor doctor) {
+    public Diagnosis(Long diagnosisId,  String attachment, String description, String ICD10, MedicalRecordEntry medicalRecordEntry, Doctor doctor) {
         this.diagnosisId = diagnosisId;
 
-        this.officialDiagnosis = officialDiagnosis;
+        this.attachment = attachment;
         this.description = description;
-        this.followUps = followUps;
+        this.ICD10 = ICD10;
         this.medicalRecordEntry = medicalRecordEntry;
         this.doctor = doctor;
     }
@@ -54,11 +54,11 @@ public class Diagnosis {
     }
 
     public String getOfficialDiagnosis() {
-        return officialDiagnosis;
+        return attachment;
     }
 
-    public void setOfficialDiagnosis(String officialDiagnosis) {
-        this.officialDiagnosis = officialDiagnosis;
+    public void setOfficialDiagnosis(String attachment) {
+        this.attachment = attachment;
     }
 
     public String getDescription() {
@@ -70,11 +70,11 @@ public class Diagnosis {
     }
 
     public String getFollowUps() {
-        return followUps;
+        return ICD10;
     }
 
-    public void setFollowUps(String followUps) {
-        this.followUps = followUps;
+    public void setFollowUps(String ICD10) {
+        this.ICD10 = ICD10;
     }
 
     public MedicalRecordEntry getMedicalRecordEntry() {

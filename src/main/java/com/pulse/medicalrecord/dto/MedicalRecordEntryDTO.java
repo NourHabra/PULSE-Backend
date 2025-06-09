@@ -1,11 +1,11 @@
 package com.pulse.medicalrecord.dto;
 
-import com.pulse.medicalrecord.model.MedicalRecordEntry;
 import com.pulse.diagnosis.model.Diagnosis;
 import com.pulse.emergencyevent.model.EmergencyEvent;
-import com.pulse.prescription.model.Prescription;
 import com.pulse.labresult.model.LabResult;
+import com.pulse.drug.model.PrescriptionDrug;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class MedicalRecordEntryDTO {
     private Long entryId;
@@ -15,10 +15,10 @@ public class MedicalRecordEntryDTO {
 
     private Diagnosis       diagnosis;
     private EmergencyEvent  emergencyEvent;
-    private Prescription    prescription;
-//    private LabResult       labResult;
 
-    public MedicalRecordEntryDTO(MedicalRecordEntry mre) {
+    private List<PrescriptionDrug> prescriptionDrugs;
+
+    public MedicalRecordEntryDTO(com.pulse.medicalrecord.model.MedicalRecordEntry mre) {
         this.entryId   = mre.getMedicalRecordEntryId();
         this.title     = mre.getTitle();
         this.timestamp = mre.getTimestamp();
@@ -29,7 +29,6 @@ public class MedicalRecordEntryDTO {
     public Long getEntryId() {
         return entryId;
     }
-
     public void setEntryId(Long entryId) {
         this.entryId = entryId;
     }
@@ -37,7 +36,6 @@ public class MedicalRecordEntryDTO {
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -45,7 +43,6 @@ public class MedicalRecordEntryDTO {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
-
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
@@ -53,7 +50,6 @@ public class MedicalRecordEntryDTO {
     public Long getPatientId() {
         return patientId;
     }
-
     public void setPatientId(Long patientId) {
         this.patientId = patientId;
     }
@@ -61,7 +57,6 @@ public class MedicalRecordEntryDTO {
     public Diagnosis getDiagnosis() {
         return diagnosis;
     }
-
     public void setDiagnosis(Diagnosis diagnosis) {
         this.diagnosis = diagnosis;
     }
@@ -69,25 +64,14 @@ public class MedicalRecordEntryDTO {
     public EmergencyEvent getEmergencyEvent() {
         return emergencyEvent;
     }
-
     public void setEmergencyEvent(EmergencyEvent emergencyEvent) {
         this.emergencyEvent = emergencyEvent;
     }
 
-    public Prescription getPrescription() {
-        return prescription;
+    public List<PrescriptionDrug> getPrescriptionDrugs() {
+        return prescriptionDrugs;
     }
-
-    public void setPrescription(Prescription prescription) {
-        this.prescription = prescription;
+    public void setPrescriptionDrugs(List<PrescriptionDrug> prescriptionDrugs) {
+        this.prescriptionDrugs = prescriptionDrugs;
     }
-
-//    public LabResult getLabResult() {
-//        return labResult;
-//    }
-//
-//    public void setLabResult(LabResult labResult) {
-//        this.labResult = labResult;
-//    }
-
 }

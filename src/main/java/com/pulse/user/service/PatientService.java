@@ -7,7 +7,7 @@ import com.pulse.user.repository.PatientRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.pulse.exception.EmailAlreadyExistsException;
-
+import com.pulse.user.dto.PatientUpdateDto;
 @Service
 public class PatientService {
 
@@ -55,6 +55,23 @@ public class PatientService {
             throw new RuntimeException("Invalid credentials");
         }
         return patient;
+    }
+
+
+    public Patient updatePatient(Patient patient, PatientUpdateDto dto) {
+        if (dto.getFirstName() != null) patient.setFirstName(dto.getFirstName());
+        if (dto.getLastName() != null) patient.setLastName(dto.getLastName());
+        if (dto.getGender() != null) patient.setGender(dto.getGender());
+        if (dto.getDateOfBirth() != null) patient.setDateOfBirth(dto.getDateOfBirth());
+        if (dto.getPlaceOfBirth() != null) patient.setPlaceOfBirth(dto.getPlaceOfBirth());
+        if (dto.getMobileNumber() != null) patient.setMobileNumber(dto.getMobileNumber());
+        if (dto.getAddress() != null) patient.setAddress(dto.getAddress());
+        if (dto.getPictureUrl() != null) patient.setPictureUrl(dto.getPictureUrl());
+        if (dto.getHeight() != null) patient.setHeight(dto.getHeight());
+        if (dto.getWeight() != null) patient.setWeight(dto.getWeight());
+        if (dto.getBloodType() != null) patient.setBloodType(dto.getBloodType());
+
+        return patientRepository.save(patient);
     }
 
 

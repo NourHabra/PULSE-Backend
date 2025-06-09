@@ -28,7 +28,7 @@ public class Prescription {
     @JoinColumn(name = "medical_record_entry_id", nullable = false)
     private MedicalRecordEntry medicalRecordEntry;
 
-    // Constructors
+
     public Prescription() {}
 
     public Prescription(Long prescriptionId, String notes, String status, Doctor doctor, MedicalRecordEntry medicalRecordEntry) {

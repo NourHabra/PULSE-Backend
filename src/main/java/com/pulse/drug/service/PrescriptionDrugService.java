@@ -39,4 +39,13 @@ public class PrescriptionDrugService {
     }
 
     public void delete(Long id) { repo.deleteById(id); }
+
+    public List<PrescriptionDrug> findAllByMreId(Long mreId) {
+        return repo.findByPrescription_MedicalRecordEntry_MedicalRecordEntryId(mreId);
+    }
+
+    public List<PrescriptionDrug> findByPrescriptionId(Long prescriptionId) {
+        return repo.findByPrescription_PrescriptionId(prescriptionId);
+    }
+
 }

@@ -135,4 +135,11 @@ public class PrescriptionDrugController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/prescription/{prescriptionId}")
+    public ResponseEntity<List<PrescriptionDrug>> getByPrescriptionId(@PathVariable Long prescriptionId) {
+        List<PrescriptionDrug> prescriptionDrugs = service.findByPrescriptionId(prescriptionId);
+        return ResponseEntity.ok(prescriptionDrugs);
+    }
+
 }

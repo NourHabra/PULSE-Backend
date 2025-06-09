@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.pulse.email.service.ActivationService;
-
+import com.pulse.user.dto.PatientUpdateDto;
 @RestController
 @RequestMapping("/auth")
 public class PatientController {
@@ -75,6 +75,41 @@ public class PatientController {
             ));
         } else {
 
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new UserLoginResponse(
+                    "Unauthorized access",
+                    null,
+                    null,
+                    null
+            ));
+        }
+    }
+
+
+
+
+    @PutMapping("/update/patient")
+    public ResponseEntity<UserLoginResponse> updatePatient(
+            @RequestHeader("Authorization") String token,
+            @RequestBody PatientUpdateDto dto
+    ) {
+        String jwttoken = token.startsWith("Bearer ")
+                ? token.substring(7)
+                : token;
+        UserDetails user = jwtService.getUserFromToken(jwttoken);
+
+        if (user != null && user instanceof Patient) {
+            Patient patient = (Patient) user;
+
+            Patient updated = patientService.updatePatient(patient, dto);
+            String newToken = jwtService.generateToken(updated);
+
+            return ResponseEntity.ok(new UserLoginResponse(
+                    "Patient profile updated successfully",
+                    newToken,
+                    jwtService.getExpirationTime(),
+                    updated
+            ));
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new UserLoginResponse(
                     "Unauthorized access",
                     null,
