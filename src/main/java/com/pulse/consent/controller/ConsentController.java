@@ -4,6 +4,9 @@ import com.pulse.consent.model.Consent;
 import com.pulse.consent.service.ConsentService;
 import com.pulse.security.service.JwtService;
 import com.pulse.notification.service.WebSocketPushService;
+import com.pulse.user.dto.UserLoginResponse;
+import com.pulse.user.model.Doctor;
+import com.pulse.user.model.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -57,7 +61,7 @@ public class ConsentController {
 
 
 
-    /* ========= Doctor sends consent request ========= */
+
     @PreAuthorize("hasRole('DOCTOR')")
     @PostMapping("/patient/{patientId}")
     public ResponseEntity<Consent> requestConsent(@PathVariable Long patientId,
@@ -76,7 +80,7 @@ public class ConsentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(c);
     }
 
-    /* ---------- patient approves or denies ---------- */
+
     @PreAuthorize("hasRole('PATIENT')")
     @PutMapping("/{id}")
     public ResponseEntity<Void> decide(@PathVariable Long id,
@@ -103,5 +107,22 @@ public class ConsentController {
 
         return ResponseEntity.ok().build();
     }
+    @GetMapping("/patients")
+    public ResponseEntity<List<Patient>> getPatientsWithConsent(@RequestHeader("Authorization") String token) {
+        String jwttoken = token.startsWith("Bearer ")
+                ? token.substring(7)
+                : token;
+        UserDetails user = jwtService.getUserFromToken(jwttoken);
 
+
+            Doctor doctor = (Doctor) user;
+
+
+            List<Patient> patients = consentSvc.getPatientsByDoctorId(doctor.getUserId());
+            return ResponseEntity.ok(patients);
+
+
+
+
+    }
 }

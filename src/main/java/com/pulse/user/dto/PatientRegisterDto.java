@@ -14,17 +14,16 @@ public class PatientRegisterDto {
     private Double weight;
     private String bloodType;
 
-//    private String fingerprint;
     private String gender;
     private LocalDate dateOfBirth;
     private String placeOfBirth;
     private String mobileNumber;
     private String address;
     private String pictureUrl;
+    private String idImage;
     public PatientRegisterDto() {
     }
 
-    // Getters & Setters
 
     public String getFirstName() {
         return firstName;
@@ -75,12 +74,7 @@ public class PatientRegisterDto {
         this.bloodType = bloodType;
     }
 
-//    public String getFingerprint() {
-//        return fingerprint;
-//    }
-//    public void setFingerprint(String fingerprint) {
-//        this.fingerprint = fingerprint;
-//    }
+
 
     public String getGender() {
         return gender;
@@ -130,5 +124,11 @@ public class PatientRegisterDto {
         this.pictureUrl = pictureUrl;
     }
 
+    public String getIdImage() {
+        return idImage;
+    }
 
+    public void setIdImage(String idImage) {
+        this.idImage = idImage;
+    }
 }

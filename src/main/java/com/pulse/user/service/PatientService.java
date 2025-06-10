@@ -2,12 +2,17 @@ package com.pulse.user.service;
 
 import com.pulse.user.dto.PatientLoginDto;
 import com.pulse.user.dto.PatientRegisterDto;
+import com.pulse.user.dto.PatientSummaryDto;
 import com.pulse.user.model.Patient;
 import com.pulse.user.repository.PatientRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.pulse.exception.EmailAlreadyExistsException;
 import com.pulse.user.dto.PatientUpdateDto;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PatientService {
 
@@ -43,7 +48,7 @@ public class PatientService {
         patient.setPlaceOfBirth(dto.getPlaceOfBirth());
         patient.setAddress(dto.getAddress());
         patient.setPictureUrl(dto.getPictureUrl());
-
+        patient.setIdImage(dto.getIdImage());
         Patient saved = patientRepository.save(patient);
 //        fhirPatientService.pushToFhir(saved);
         return saved;
@@ -74,8 +79,20 @@ public class PatientService {
         return patientRepository.save(patient);
     }
 
-
+    public Patient getPatientById(Long patientId) {
+        return patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+    }
     public Patient getPatientByEmail(String email) {
         return patientRepository.findByEmail(email);
+    }
+
+    public List<PatientSummaryDto> getAllPatientSummaries() {
+        List<Patient> patients = patientRepository.findAll();
+        return patients.stream()
+                .map(patient -> new PatientSummaryDto(patient.getUserId(),
+                        patient.getFirstName() + " " + patient.getLastName(),
+                        patient.getPictureUrl()))
+                .collect(Collectors.toList());
     }
 }

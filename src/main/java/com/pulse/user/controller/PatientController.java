@@ -1,9 +1,7 @@
 package com.pulse.user.controller;
 
 import com.pulse.security.service.JwtService;
-import com.pulse.user.dto.PatientRegisterDto;
-import com.pulse.user.dto.PatientLoginDto;
-import com.pulse.user.dto.UserLoginResponse;
+import com.pulse.user.dto.*;
 import com.pulse.user.model.Patient;
 import com.pulse.user.service.PatientService;
 import org.springframework.http.HttpStatus;
@@ -11,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.pulse.email.service.ActivationService;
-import com.pulse.user.dto.PatientUpdateDto;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/auth")
 public class PatientController {
@@ -117,6 +117,11 @@ public class PatientController {
                     null
             ));
         }
+    }
+    @GetMapping("/patients")
+    public ResponseEntity<List<PatientSummaryDto>> getAllPatients() {
+        List<PatientSummaryDto> patientSummaries = patientService.getAllPatientSummaries();
+        return ResponseEntity.ok(patientSummaries);
     }
 
 }

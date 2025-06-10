@@ -20,12 +20,12 @@ public class Consent {
     private Long doctorId;
 
     @Enumerated(EnumType.STRING)
-    private ConsentStatus status;          // ACTIVE | REVOKED
+    private ConsentStatus status;
 
     private Instant requestedAt;
 
-    /* ---- constructors ---- */
-    public Consent() {}                    // JPA needs it
+
+    public Consent() {}
 
     public Consent(Long patientId, Long doctorId,
                    ConsentStatus status, Instant requestedAt) {
@@ -35,7 +35,7 @@ public class Consent {
         this.requestedAt = requestedAt;
     }
 
-    /* ---- getters / setters ---- */
+
     public Long getId()              { return id; }
     public Long getPatientId()       { return patientId; }
     public void setPatientId(Long v) { this.patientId = v; }

@@ -1,9 +1,6 @@
 package com.pulse.user.service;
 
-import com.pulse.user.dto.DoctorLoginDto;
-import com.pulse.user.dto.DoctorProfileDto;
-import com.pulse.user.dto.DoctorRegisterDto;
-import com.pulse.user.dto.FeaturedDoctorDto;
+import com.pulse.user.dto.*;
 import com.pulse.user.model.Doctor;
 import com.pulse.user.repository.DoctorRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -105,5 +102,20 @@ public class DoctorService {
         return convertToEmbedLink(coordinatesLink);
     }
 
+    public Doctor updateDoctor(Doctor doctor, DoctorUpdateDto dto) {
+        if (dto.getFirstName() != null) doctor.setFirstName(dto.getFirstName());
+        if (dto.getLastName() != null) doctor.setLastName(dto.getLastName());
+        if (dto.getGender() != null) doctor.setGender(dto.getGender());
+        if (dto.getSpecialization() != null) doctor.setSpecialization(dto.getSpecialization());
+        if (dto.getLicenseNumber() != null) doctor.setLicenseNumber(dto.getLicenseNumber());
+        if (dto.getWorkingHours() != null) doctor.setWorkingHours(dto.getWorkingHours());
+        if (dto.getBiography() != null) doctor.setBiography(dto.getBiography());
+        if (dto.getCoordinates() != null) doctor.setCoordinates(dto.getCoordinates());
+        if (dto.getPictureUrl() != null) doctor.setPictureUrl(dto.getPictureUrl());
+        if (dto.getAddress() != null) doctor.setAddress(dto.getAddress());
+        if (dto.getMobileNumber() != null) doctor.setMobileNumber(dto.getMobileNumber());
+
+        return doctorRepository.save(doctor);
+    }
 
 }

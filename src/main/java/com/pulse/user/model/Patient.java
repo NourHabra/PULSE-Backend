@@ -21,10 +21,9 @@ public class Patient extends User {
     @Column(name = "BloodType")
     private String bloodType;
 
-//    @Lob
-//    @Column(name = "Fingerprint")
-//    private String fingerprint;
 
+    @Column(name = "IDImage")
+    private String idImage;
 
     public Patient() {
         super.setRole("patient");
@@ -54,14 +53,14 @@ public class Patient extends User {
         this.bloodType = bloodType;
     }
 
-//    public String getFingerprint() {
-//        return fingerprint;
-//    }
-//
-//    public void setFingerprint(String fingerprint) {
-//        this.fingerprint = fingerprint;
-//    }
 
 
+    public String getIdImage() {
+        return idImage;
+    }
+
+    public void setIdImage(String idImage) {
+        this.idImage = idImage;
+    }
 
 }

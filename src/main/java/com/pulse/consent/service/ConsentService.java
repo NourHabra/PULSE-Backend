@@ -3,20 +3,27 @@ package com.pulse.consent.service;
 import com.pulse.consent.model.*;
 import com.pulse.consent.repository.ConsentRepository;
 import com.pulse.exception.ConsentAlreadyPendingException;
+import com.pulse.user.model.Patient;
+import com.pulse.user.repository.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Service
 public class ConsentService {
 
     private final ConsentRepository repo;
+    private final PatientRepository patientRepository;
 
-    public ConsentService(ConsentRepository repo) { this.repo = repo; }
+
+    public ConsentService(ConsentRepository repo, PatientRepository patientRepository) { this.repo = repo; this.patientRepository=patientRepository;}
 
     @Transactional
     public Consent giveConsent(Long patientId, Long doctorId) {
@@ -93,5 +100,15 @@ public class ConsentService {
                 Instant.now()
         ));
     }
+    public List<Patient> getPatientsByDoctorId(Long doctorId) {
+        List<Consent> consents = repo.findByDoctorId(doctorId);
+
+        List<Long> patientIds = consents.stream()
+                .map(Consent::getPatientId)
+                .collect(Collectors.toList());
+
+        return patientRepository.findAllById(patientIds);
+    }
+
 
 }
