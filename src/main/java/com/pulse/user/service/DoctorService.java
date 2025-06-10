@@ -1,26 +1,39 @@
 package com.pulse.user.service;
 
+import com.pulse.diagnosis.model.Diagnosis;
+import com.pulse.diagnosis.repository.DiagnosisRepository;
 import com.pulse.user.dto.*;
 import com.pulse.user.model.Doctor;
+import com.pulse.user.model.Patient;
 import com.pulse.user.repository.DoctorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.pulse.exception.EmailAlreadyExistsException;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-
+import java.util.HashSet;
 @Service
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DiagnosisRepository diagnosisRepository;
 
-    public DoctorService(DoctorRepository doctorRepository, PasswordEncoder passwordEncoder) {
+    public DoctorService(DoctorRepository doctorRepository, PasswordEncoder passwordEncoder,DiagnosisRepository diagnosisRepository) {
         this.doctorRepository = doctorRepository;
         this.passwordEncoder = passwordEncoder;
+        this.diagnosisRepository=diagnosisRepository;
     }
 
     public Doctor register(DoctorRegisterDto dto) {
@@ -118,4 +131,52 @@ public class DoctorService {
         return doctorRepository.save(doctor);
     }
 
+
+    public List<PatientSummaryDto> getLastDiagnosedPatients(Long doctorId, int limit) {
+        Pageable page = PageRequest.of(0, limit * 3);
+        List<Diagnosis> diag = diagnosisRepository
+                .findByDoctor_UserIdOrderByMedicalRecordEntry_TimestampDesc(doctorId, page);
+
+        List<PatientSummaryDto> result = new ArrayList<>();
+        Set<Long> seen = new HashSet<>();
+
+        for (Diagnosis d : diag) {
+            Patient p = d.getMedicalRecordEntry().getPatient();
+            if (seen.add(p.getUserId())) {
+                result.add(new PatientSummaryDto(
+                        p.getUserId(),
+                        p.getFirstName(),
+                        p.getLastName()
+                ));
+                if (result.size() == limit) break;
+            }
+        }
+        return result;
+    }
+
+    private long countBetween(Long doctorId, LocalDateTime start, LocalDateTime end) {
+        return diagnosisRepository
+                .countByDoctor_UserIdAndMedicalRecordEntry_TimestampBetween(doctorId, start, end);
+    }
+
+    public long countDiagnosesToday(Long doctorId) {
+        LocalDateTime start = LocalDate.now().atStartOfDay();
+        LocalDateTime end   = LocalDateTime.now();
+        return countBetween(doctorId, start, end);
+    }
+
+    public long countDiagnosesThisWeek(Long doctorId) {
+        LocalDate monday = LocalDate.now()
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDateTime start = monday.atStartOfDay();
+        LocalDateTime end   = LocalDateTime.now();
+        return countBetween(doctorId, start, end);
+    }
+
+    public long countDiagnosesThisMonth(Long doctorId) {
+        LocalDate firstOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDateTime start = firstOfMonth.atStartOfDay();
+        LocalDateTime end   = LocalDateTime.now();
+        return countBetween(doctorId, start, end);
+    }
 }

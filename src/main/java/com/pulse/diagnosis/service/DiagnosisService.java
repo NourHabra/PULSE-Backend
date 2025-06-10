@@ -7,6 +7,10 @@ import com.pulse.emergencyevent.model.EmergencyEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import com.pulse.medicalrecord.model.MedicalRecordEntry;
 import com.pulse.medicalrecord.repository.MedicalRecordEntryRepository;
@@ -44,4 +48,6 @@ public class DiagnosisService {
     public Optional<Diagnosis> findByMreId(Long mreId) {
         return diagRepo.findByMedicalRecordEntry_MedicalRecordEntryId(mreId);
     }
+
+
 }

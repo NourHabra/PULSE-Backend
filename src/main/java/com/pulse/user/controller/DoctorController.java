@@ -190,4 +190,70 @@ public class DoctorController {
             ));
         }
     }
+
+    @GetMapping("/patients/recent")
+    public ResponseEntity<?> getRecentPatients(
+            @RequestHeader("Authorization") String token
+    ) {
+        String jwt = token.startsWith("Bearer ")
+                ? token.substring(7)
+                : token;
+
+        UserDetails user = jwtService.getUserFromToken(jwt);
+        if (!(user instanceof Doctor)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Long doctorId = ((Doctor) user).getUserId();
+        List<PatientSummaryDto> last5 = doctorService
+                .getLastDiagnosedPatients(doctorId, 5);
+
+        if (last5.isEmpty()) {
+            return ResponseEntity
+                    .ok("No patients found for this doctor yet.");
+        }
+
+        return ResponseEntity.ok(last5);
+    }
+    @GetMapping("/diagnoses/count/today")
+    public ResponseEntity<Long> countToday(@RequestHeader("Authorization") String token) {
+        Long docId = extractDoctorId(token);
+        if (docId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        long count = doctorService.countDiagnosesToday(docId);
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/diagnoses/count/week")
+    public ResponseEntity<Long> countWeek(@RequestHeader("Authorization") String token) {
+        Long docId = extractDoctorId(token);
+        if (docId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        long count = doctorService.countDiagnosesThisWeek(docId);
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/diagnoses/count/month")
+    public ResponseEntity<Long> countMonth(@RequestHeader("Authorization") String token) {
+        Long docId = extractDoctorId(token);
+        if (docId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        long count = doctorService.countDiagnosesThisMonth(docId);
+        return ResponseEntity.ok(count);
+    }
+
+
+    private Long extractDoctorId(String bearerToken) {
+        String jwt = bearerToken.startsWith("Bearer ")
+                ? bearerToken.substring(7)
+                : bearerToken;
+        UserDetails user = jwtService.getUserFromToken(jwt);
+        if (user instanceof Doctor) {
+            return ((Doctor) user).getUserId();
+        }
+        return null;
+    }
 }
