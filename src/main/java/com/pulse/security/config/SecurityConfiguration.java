@@ -44,6 +44,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/auth/activate", "/auth/**", "/static/**").permitAll()
                         .requestMatchers("/labs/**").permitAll()
                         .requestMatchers("/pharmacies/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

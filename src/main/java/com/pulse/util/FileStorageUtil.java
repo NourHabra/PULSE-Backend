@@ -21,7 +21,7 @@ public class FileStorageUtil {
         Path filePath = Paths.get(folderPath, fileName);
         Files.write(filePath, file.getBytes());
 
-        return "/images/" + subfolder + "/" + fileName;
+        return "https://localhost:8443/uploads/" + subfolder + "/" + fileName;
     }
 
     private static String getFileExtension(String filename) {
