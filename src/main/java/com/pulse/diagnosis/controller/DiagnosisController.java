@@ -11,6 +11,7 @@ import com.pulse.user.model.Doctor;
 import com.pulse.user.model.Patient;
 import com.pulse.user.repository.DoctorRepository;
 import com.pulse.security.service.JwtService;
+import com.pulse.util.FileStorageUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,6 +20,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 @RestController
@@ -41,12 +45,11 @@ public class DiagnosisController {
     @PostMapping("/add")
     public ResponseEntity<Diagnosis> addDiagnosis(
             @RequestHeader("Authorization") String authHeader,
-            @RequestBody DiagnosisRequest dto
-    ) {
+            @RequestPart("data") DiagnosisRequest dto,
+            @RequestPart("attachment") MultipartFile attachmentFile
+    ) throws IOException {
 
-        String token = authHeader.startsWith("Bearer ")
-                ? authHeader.substring(7)
-                : authHeader;
+        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
         UserDetails userDetails = jwtService.getUserFromToken(token);
         if (!jwtService.isTokenValid(token, userDetails)) {
             throw new RuntimeException("Invalid or expired JWT");
@@ -64,6 +67,9 @@ public class DiagnosisController {
             throw new AccessDeniedException("You are not registered as a Doctor");
         }
 
+        String attachmentPath = FileStorageUtil.saveFile(attachmentFile, "diagnosis_attachment");
+        dto.setAttachment(attachmentPath);
+
         MedicalRecordEntry mre = new MedicalRecordEntry();
         mre.setTitle(dto.getMreTitle());
         mre.setTimestamp(LocalDateTime.now());
@@ -72,17 +78,19 @@ public class DiagnosisController {
         mre.setPatient(patient);
 
         Diagnosis diag = new Diagnosis();
-        diag.setOfficialDiagnosis(dto.getOfficialDiagnosis());
         diag.setDescription(dto.getDescription());
-        diag.setFollowUps(dto.getFollowUps());
+        diag.setICD10(dto.getICD10());
+        diag.setAttachment(attachmentPath);
         diag.setDoctor(doctor);
+        diag.setMedicalRecordEntry(mre);
 
         Diagnosis saved = diagnosisService.createDiagnosisWithMre(diag, mre);
-        logger.info("Diagnosis created id={} by doctor={}",
-                saved.getDiagnosisId(),
-                doctor.getUserId());
+
+        logger.info("Diagnosis created id={} by doctor={}", saved.getDiagnosisId(), doctor.getUserId());
         return ResponseEntity.ok(saved);
     }
+
+
 
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<Diagnosis>> listByPatient(

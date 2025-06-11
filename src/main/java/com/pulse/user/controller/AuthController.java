@@ -4,6 +4,7 @@ import com.pulse.security.service.JwtService;
 import com.pulse.user.dto.*;
 import com.pulse.user.model.Admin;
 import com.pulse.user.model.User;
+import com.pulse.user.repository.UserRepository;
 import com.pulse.user.service.AdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.pulse.email.service.ActivationService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,15 +36,18 @@ public class AuthController {
     private final UserService userService;
     private final OtpService otpService;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     public AuthController(AuthenticationManager authenticationManager,
                           UserService userService,
                           OtpService otpService,
-                          JwtService jwtService) {
+                          JwtService jwtService,
+                          UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.otpService = otpService;
         this.jwtService = jwtService;
+        this.userRepository=userRepository;
     }
 
 
@@ -85,5 +91,31 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody ChangePasswordRequest changePasswordRequest
+    ) {
+        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+        UserDetails userDetails = jwtService.getUserFromToken(token);
+
+        if (!jwtService.isTokenValid(token, userDetails)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
+        }
+
+        User user = userRepository.findByEmail(userDetails.getUsername());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+        userRepository.save(user);
+        return ResponseEntity.ok("Password changed");
+    }
 
 }

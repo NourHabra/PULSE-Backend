@@ -15,12 +15,16 @@ import com.pulse.user.model.LabTechnician;
 import com.pulse.user.model.Patient;
 import com.pulse.user.repository.LabTechnicianRepository;
 import com.pulse.security.service.JwtService;
+import com.pulse.util.FileStorageUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -82,15 +86,64 @@ public class LabResultController {
     }
 
 
+//    @PostMapping("/add")
+//    public ResponseEntity<LabResult> addLabResult(
+//            @RequestHeader("Authorization") String authHeader,
+//            @RequestBody LabResultRequest dto
+//    ) {
+//
+//        String token = authHeader.startsWith("Bearer ")
+//                ? authHeader.substring(7)
+//                : authHeader;
+//        UserDetails ud = jwtService.getUserFromToken(token);
+//        if (!jwtService.isTokenValid(token, ud)) {
+//            throw new RuntimeException("Invalid/expired token");
+//        }
+//
+//        boolean isTech = ud.getAuthorities().stream()
+//                .anyMatch(a -> a.getAuthority().equals("ROLE_LAB_TECHNICIAN"));
+//        if (!isTech) throw new AccessDeniedException("Not a lab technician");
+//
+//
+//        LabTechnician tech = techRepo.findByEmail(ud.getUsername());
+//        if (tech == null) throw new AccessDeniedException("Unknown technician");
+//
+//
+//        Laboratory lab = labRepo.findById(dto.getLabId())
+//                .orElseThrow(() -> new RuntimeException("No lab " + dto.getLabId()));
+//        Test test = testRepo.findById(dto.getTestId())
+//                .orElseThrow(() -> new RuntimeException("No test " + dto.getTestId()));
+//
+//
+//        MedicalRecordEntry mre = new MedicalRecordEntry();
+//        mre.setTitle(dto.getMreTitle());
+//        mre.setTimestamp(LocalDateTime.now());
+//        Patient p = new Patient(); p.setUserId(dto.getPatientId());
+//        mre.setPatient(p);
+//
+//
+//        LabResult lr = new LabResult();
+//        lr.setLaboratory(lab);
+//        lr.setTest(test);
+//        lr.setTechnician(tech);
+//        lr.setStatus(dto.getStatus());
+//        lr.setResultsAttachment(dto.getResultsAttachment());
+//        lr.setTechnicianNotes(dto.getTechnicianNotes());
+//        lr.setMedicalRecordEntry(mre);
+//
+//        LabResult saved = service.createWithMre(lr, mre);
+//
+//        return ResponseEntity.ok(saved);
+//    }
+
     @PostMapping("/add")
     public ResponseEntity<LabResult> addLabResult(
             @RequestHeader("Authorization") String authHeader,
-            @RequestBody LabResultRequest dto
-    ) {
+            @RequestPart("data") LabResultRequest dto,
+            @RequestPart("resultsAttachment") MultipartFile resultsAttachmentFile
+    ) throws IOException {
 
-        String token = authHeader.startsWith("Bearer ")
-                ? authHeader.substring(7)
-                : authHeader;
+        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
         UserDetails ud = jwtService.getUserFromToken(token);
         if (!jwtService.isTokenValid(token, ud)) {
             throw new RuntimeException("Invalid/expired token");
@@ -100,30 +153,30 @@ public class LabResultController {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_LAB_TECHNICIAN"));
         if (!isTech) throw new AccessDeniedException("Not a lab technician");
 
-
         LabTechnician tech = techRepo.findByEmail(ud.getUsername());
         if (tech == null) throw new AccessDeniedException("Unknown technician");
-
 
         Laboratory lab = labRepo.findById(dto.getLabId())
                 .orElseThrow(() -> new RuntimeException("No lab " + dto.getLabId()));
         Test test = testRepo.findById(dto.getTestId())
                 .orElseThrow(() -> new RuntimeException("No test " + dto.getTestId()));
 
+        String resultsAttachmentPath = FileStorageUtil.saveFile(resultsAttachmentFile, "lab_results");
+        dto.setResultsAttachment(resultsAttachmentPath);
 
         MedicalRecordEntry mre = new MedicalRecordEntry();
         mre.setTitle(dto.getMreTitle());
         mre.setTimestamp(LocalDateTime.now());
-        Patient p = new Patient(); p.setUserId(dto.getPatientId());
+        Patient p = new Patient();
+        p.setUserId(dto.getPatientId());
         mre.setPatient(p);
-
 
         LabResult lr = new LabResult();
         lr.setLaboratory(lab);
         lr.setTest(test);
         lr.setTechnician(tech);
         lr.setStatus(dto.getStatus());
-        lr.setResultsAttachment(dto.getResultsAttachment());
+        lr.setResultsAttachment(resultsAttachmentPath);
         lr.setTechnicianNotes(dto.getTechnicianNotes());
         lr.setMedicalRecordEntry(mre);
 
@@ -131,4 +184,5 @@ public class LabResultController {
 
         return ResponseEntity.ok(saved);
     }
+
 }

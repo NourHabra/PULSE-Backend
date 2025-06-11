@@ -53,11 +53,11 @@ public class Diagnosis {
         this.diagnosisId = diagnosisId;
     }
 
-    public String getOfficialDiagnosis() {
+    public String getAttachment() {
         return attachment;
     }
 
-    public void setOfficialDiagnosis(String attachment) {
+    public void setAttachment(String attachment) {
         this.attachment = attachment;
     }
 
@@ -69,11 +69,11 @@ public class Diagnosis {
         this.description = description;
     }
 
-    public String getFollowUps() {
+    public String getICD10() {
         return ICD10;
     }
 
-    public void setFollowUps(String ICD10) {
+    public void setICD10(String ICD10) {
         this.ICD10 = ICD10;
     }
 

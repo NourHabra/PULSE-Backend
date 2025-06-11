@@ -16,12 +16,12 @@ public class DiagnosisRequest {
         this.mreTitle = mreTitle;
         this.patientId = patientId;
     }
-    public String getOfficialDiagnosis() { return attachment; }
-    public void setOfficialDiagnosis(String attachment) { this.attachment = attachment; }
+    public String getAttachment() { return attachment; }
+    public void setAttachment(String attachment) { this.attachment = attachment; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public String getFollowUps() { return ICD10; }
-    public void setFollowUps(String ICD10) { this.ICD10 = ICD10; }
+    public String getICD10() { return ICD10; }
+    public void setICD10(String ICD10) { this.ICD10 = ICD10; }
     public String getMreTitle() { return mreTitle; }
     public void setMreTitle(String mreTitle) { this.mreTitle = mreTitle; }
     public Long getPatientId() { return patientId; }

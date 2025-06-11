@@ -1,14 +1,19 @@
 package com.pulse.user.controller;
 
 import com.pulse.security.service.JwtService;
+import com.pulse.user.dto.DoctorRegisterDto;
 import com.pulse.user.dto.LabTechnicianRegisterDto;
 import com.pulse.user.dto.LabTechnicianLoginDto;
 import com.pulse.user.dto.UserLoginResponse;
 import com.pulse.user.model.LabTechnician;
 import com.pulse.user.service.LabTechnicianService;
+import com.pulse.util.FileStorageUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.pulse.email.service.ActivationService;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,7 +30,12 @@ public class LabTechnicianController {
     }
 
     @PostMapping("/register/labtechnician")
-    public ResponseEntity<UserLoginResponse> registerLabTechnician(@RequestBody LabTechnicianRegisterDto dto) {
+    public ResponseEntity<UserLoginResponse> registerLabTechnician(
+            @RequestPart("data") LabTechnicianRegisterDto dto,
+            @RequestPart("profilePicture") MultipartFile profilePictureFile
+    ) throws IOException {
+        String picturePath = FileStorageUtil.saveFile(profilePictureFile, "profile_pictures");
+        dto.setPictureUrl(picturePath);
         LabTechnician technician = labTechnicianService.register(dto);
         activationSvc.sendActivation(technician);
         String token = jwtService.generateToken(technician);

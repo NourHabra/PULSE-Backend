@@ -6,13 +6,16 @@ import com.pulse.user.model.Doctor;
 import com.pulse.user.model.Patient;
 import com.pulse.user.service.DoctorService;
 import com.pulse.user.service.PatientService;
+import com.pulse.util.FileStorageUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.pulse.email.service.ActivationService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -32,7 +35,12 @@ public class DoctorController {
     }
 
     @PostMapping("/register/doctor")
-    public ResponseEntity<UserLoginResponse> registerDoctor(@RequestBody DoctorRegisterDto dto) {
+    public ResponseEntity<UserLoginResponse> registerDoctor(
+            @RequestPart("data") DoctorRegisterDto dto,
+            @RequestPart("profilePicture") MultipartFile profilePictureFile
+    ) throws IOException {
+        String picturePath = FileStorageUtil.saveFile(profilePictureFile, "profile_pictures");
+        dto.setPictureUrl(picturePath);
         Doctor doctor = doctorService.register(dto);
 
         activationSvc.sendActivation(doctor);

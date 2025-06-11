@@ -41,7 +41,6 @@ public class PatientService {
         patient.setHeight(dto.getHeight());
         patient.setWeight(dto.getWeight());
         patient.setBloodType(dto.getBloodType());
-//        patient.setFingerprint(dto.getFingerprint());
         patient.setGender(dto.getGender());
         patient.setMobileNumber(dto.getMobileNumber());
         patient.setDateOfBirth(dto.getDateOfBirth());
@@ -50,7 +49,6 @@ public class PatientService {
         patient.setPictureUrl(dto.getPictureUrl());
         patient.setIdImage(dto.getIdImage());
         Patient saved = patientRepository.save(patient);
-//        fhirPatientService.pushToFhir(saved);
         return saved;
     }
 
