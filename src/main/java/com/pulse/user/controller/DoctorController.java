@@ -34,62 +34,28 @@ public class DoctorController {
         this.patientService=patientService;
     }
 
-//    @PostMapping("/register/doctor")
-//    public ResponseEntity<UserLoginResponse> registerDoctor(
-//            @RequestPart("data") DoctorRegisterDto dto,
-//            @RequestPart("profilePicture") MultipartFile profilePictureFile
-//    ) throws IOException {
-//        String picturePath = FileStorageUtil.saveFile(profilePictureFile, "profile_pictures");
-//        dto.setPictureUrl(picturePath);
-//        Doctor doctor = doctorService.register(dto);
-//
-//        activationSvc.sendActivation(doctor);
-//
-//        String token = jwtService.generateToken(doctor);
-//
-//        return ResponseEntity.ok(new UserLoginResponse(
-//                "Doctor registered successfully",
-//                token,
-//                jwtService.getExpirationTime(),
-//                doctor
-//        ));
-//    }
-
-    @PutMapping(value = "/update/doctor", consumes = "multipart/form-data")
-    public ResponseEntity<UserLoginResponse> updateDoctor(
-            @RequestHeader("Authorization") String token,
-            @RequestPart("dto") DoctorUpdateDto dto,
-            @RequestPart(value = "profile_picture", required = false) MultipartFile profilePictureFile
+    @PostMapping("/register/doctor")
+    public ResponseEntity<UserLoginResponse> registerDoctor(
+            @RequestPart("data") DoctorRegisterDto dto,
+            @RequestPart("profilePicture") MultipartFile profilePictureFile
     ) throws IOException {
-        String jwttoken = token.startsWith("Bearer ") ? token.substring(7) : token;
-        UserDetails user = jwtService.getUserFromToken(jwttoken);
+        String picturePath = FileStorageUtil.saveFile(profilePictureFile, "profile_pictures");
+        dto.setPictureUrl(picturePath);
+        Doctor doctor = doctorService.register(dto);
 
-        if (user != null && user instanceof Doctor) {
-            Doctor doctor = (Doctor) user;
+        activationSvc.sendActivation(doctor);
 
-            if (profilePictureFile != null && !profilePictureFile.isEmpty()) {
-                String picturePath = FileStorageUtil.saveFile(profilePictureFile, "profile_pictures");
-                dto.setPictureUrl(picturePath);
-            }
+        String token = jwtService.generateToken(doctor);
 
-            Doctor updated = doctorService.updateDoctor(doctor, dto);
-            String newToken = jwtService.generateToken(updated);
-
-            return ResponseEntity.ok(new UserLoginResponse(
-                    "Doctor profile updated successfully",
-                    newToken,
-                    jwtService.getExpirationTime(),
-                    updated
-            ));
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new UserLoginResponse(
-                    "Unauthorized access",
-                    null,
-                    null,
-                    null
-            ));
-        }
+        return ResponseEntity.ok(new UserLoginResponse(
+                "Doctor registered successfully",
+                token,
+                jwtService.getExpirationTime(),
+                doctor
+        ));
     }
+
+
 
     @PostMapping("/login/doctor")
     public ResponseEntity<UserLoginResponse> loginDoctor(@RequestBody DoctorLoginDto dto) {
@@ -163,18 +129,22 @@ public class DoctorController {
 
 
 
-    @PutMapping("/update/doctor")
+    @PutMapping(value = "/update/doctor", consumes = "multipart/form-data")
     public ResponseEntity<UserLoginResponse> updateDoctor(
             @RequestHeader("Authorization") String token,
-            @RequestBody DoctorUpdateDto dto
-    ) {
-        String jwttoken = token.startsWith("Bearer ")
-                ? token.substring(7)
-                : token;
+            @RequestPart("dto") DoctorUpdateDto dto,
+            @RequestPart(value = "profile_picture", required = false) MultipartFile profilePictureFile
+    ) throws IOException {
+        String jwttoken = token.startsWith("Bearer ") ? token.substring(7) : token;
         UserDetails user = jwtService.getUserFromToken(jwttoken);
 
         if (user != null && user instanceof Doctor) {
             Doctor doctor = (Doctor) user;
+
+            if (profilePictureFile != null && !profilePictureFile.isEmpty()) {
+                String picturePath = FileStorageUtil.saveFile(profilePictureFile, "profile_pictures");
+                dto.setPictureUrl(picturePath);
+            }
 
             Doctor updated = doctorService.updateDoctor(doctor, dto);
             String newToken = jwtService.generateToken(updated);
