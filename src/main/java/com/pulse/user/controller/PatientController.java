@@ -102,18 +102,22 @@ public class PatientController {
 
 
 
-    @PutMapping("/update/patient")
+    @PutMapping(value = "/update/patient", consumes = "multipart/form-data")
     public ResponseEntity<UserLoginResponse> updatePatient(
             @RequestHeader("Authorization") String token,
-            @RequestBody PatientUpdateDto dto
-    ) {
-        String jwttoken = token.startsWith("Bearer ")
-                ? token.substring(7)
-                : token;
+            @RequestPart("dto") PatientUpdateDto dto,
+            @RequestPart(value = "profile_picture", required = false) MultipartFile profilePictureFile
+    ) throws IOException {
+        String jwttoken = token.startsWith("Bearer ") ? token.substring(7) : token;
         UserDetails user = jwtService.getUserFromToken(jwttoken);
 
         if (user != null && user instanceof Patient) {
             Patient patient = (Patient) user;
+
+            if (profilePictureFile != null && !profilePictureFile.isEmpty()) {
+                String picturePath = FileStorageUtil.saveFile(profilePictureFile, "profile_pictures");
+                dto.setPictureUrl(picturePath);
+            }
 
             Patient updated = patientService.updatePatient(patient, dto);
             String newToken = jwtService.generateToken(updated);
@@ -133,6 +137,8 @@ public class PatientController {
             ));
         }
     }
+
+
     @GetMapping("/patients")
     public ResponseEntity<List<PatientSummaryDto>> getAllPatients() {
         List<PatientSummaryDto> patientSummaries = patientService.getAllPatientSummaries();

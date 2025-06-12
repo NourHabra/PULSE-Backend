@@ -94,8 +94,7 @@ public class ImageController {
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() && resource.isReadable()) {
-                // Set the content type to PDF
-                String contentType = "application/pdf"; // PDF files
+                String contentType = "application/pdf";
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(contentType))
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
