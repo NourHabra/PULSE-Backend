@@ -179,4 +179,11 @@ public class DoctorService {
         LocalDateTime end   = LocalDateTime.now();
         return countBetween(doctorId, start, end);
     }
+    public long countDiagnosesThisYear(Long doctorId) {
+        LocalDate firstOfYear = LocalDate.now().withDayOfYear(1);
+        LocalDateTime start = firstOfYear.atStartOfDay();
+        LocalDateTime end = LocalDateTime.now();
+        return countBetween(doctorId, start, end);
+    }
+
 }

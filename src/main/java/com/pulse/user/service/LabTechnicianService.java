@@ -163,6 +163,12 @@ public class LabTechnicianService {
         return countBetween(labTechnicianId, start, end);
     }
 
+    public long countLabResultsThisYear(Long labTechnicianId) {
+        LocalDate firstOfYear = LocalDate.now().withDayOfYear(1);
+        LocalDateTime start = firstOfYear.atStartOfDay();
+        LocalDateTime end = LocalDateTime.now();
+        return countBetween(labTechnicianId, start, end);
+    }
 
 
 

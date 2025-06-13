@@ -259,6 +259,15 @@ public class DoctorController {
         return ResponseEntity.ok(count);
     }
 
+    @GetMapping("/diagnoses/count/year")
+    public ResponseEntity<Long> countYear(@RequestHeader("Authorization") String token) {
+        Long docId = extractDoctorId(token);
+        if (docId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        long count = doctorService.countDiagnosesThisYear(docId);
+        return ResponseEntity.ok(count);
+    }
 
     private Long extractDoctorId(String bearerToken) {
         String jwt = bearerToken.startsWith("Bearer ")

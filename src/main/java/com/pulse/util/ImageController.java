@@ -1,4 +1,4 @@
-package com.pulse.user.controller;
+package com.pulse.util;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;

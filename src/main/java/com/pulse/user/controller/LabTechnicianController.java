@@ -179,6 +179,16 @@ public class LabTechnicianController {
         long count = labTechnicianService.countLabResultsThisMonth(labTechnicianId);
         return ResponseEntity.ok(count);
     }
+    @GetMapping("/labResults/count/year")
+    public ResponseEntity<Long> countYear(@RequestHeader("Authorization") String token) {
+        Long labTechnicianId = extractLabTechnicianId(token);
+        if (labTechnicianId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        long count = labTechnicianService.countLabResultsThisYear(labTechnicianId);
+        return ResponseEntity.ok(count);
+    }
+
     private Long extractLabTechnicianId(String bearerToken) {
         String jwt = bearerToken.startsWith("Bearer ")
                 ? bearerToken.substring(7)
