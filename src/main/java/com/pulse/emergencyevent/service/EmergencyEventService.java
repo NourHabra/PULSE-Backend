@@ -27,17 +27,13 @@ public class EmergencyEventService {
     }
     @Transactional
     public EmergencyEvent createEventWithMre(EmergencyEvent event, MedicalRecordEntry mre) {
-        // persist the MRE first
         MedicalRecordEntry savedMre = mreRepo.save(mre);
 
-        // attach to event and persist the event
         event.setMedicalRecordEntry(savedMre);
         EmergencyEvent savedEvent = eventRepo.saveAndFlush(event);
 
         return savedEvent;
     }
-
-    // You can still keep the simple create(...) if you like:
     public EmergencyEvent create(EmergencyEvent event) {
         return eventRepo.save(event);
     }

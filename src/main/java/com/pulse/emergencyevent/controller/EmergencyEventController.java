@@ -7,8 +7,10 @@ import com.pulse.emergencyevent.service.EmergencyEventService;
 import com.pulse.medicalrecord.model.MedicalRecordEntry;
 import com.pulse.medicalrecord.service.MedicalRecordEntryService;
 import com.pulse.prescription.model.Prescription;
+import com.pulse.user.model.Doctor;
 import com.pulse.user.model.EmergencyWorker;
 import com.pulse.user.model.Patient;
+import com.pulse.user.repository.DoctorRepository;
 import com.pulse.user.repository.EmergencyWorkerRepository;
 import com.pulse.security.service.JwtService;
 
@@ -30,15 +32,15 @@ public class EmergencyEventController {
 
     private final EmergencyEventService eventService;
 
-    private final EmergencyWorkerRepository workerRepo;
+    private final DoctorRepository doctorRepo;
     private final JwtService jwtService;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public EmergencyEventController(EmergencyEventService eventService,
-                                    EmergencyWorkerRepository workerRepo,
+                                    DoctorRepository doctorRepo,
                                     JwtService jwtService) {
         this.eventService = eventService;
-        this.workerRepo = workerRepo;
+        this.doctorRepo = doctorRepo;
         this.jwtService = jwtService;
     }
 
@@ -56,17 +58,17 @@ public class EmergencyEventController {
         }
 
 
-        boolean isWorker = userDetails.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_EMERGENCY_WORKER"));
-        if (!isWorker) {
-            throw new AccessDeniedException("You are not an Emergency Worker");
+        boolean isDoctor = userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"));
+        if (!isDoctor) {
+            throw new AccessDeniedException("You are not authorized to add emergency events");
         }
 
 
         String username = userDetails.getUsername();
-        EmergencyWorker worker = workerRepo.findByEmail(username);
-        if (worker == null) {
-            throw new AccessDeniedException("You are not registered as an Emergency Worker");
+        Doctor doctor = doctorRepo.findByEmail(username);
+        if (doctor == null) {
+            throw new AccessDeniedException("You are not registered as a Doctor");
         }
 
 
@@ -80,15 +82,15 @@ public class EmergencyEventController {
 
         EmergencyEvent ev = new EmergencyEvent();
         ev.setNotes(dto.getNotes());
-        ev.setEmergencyWorker(worker);            // now 'worker' exists
+        ev.setDoctor(doctor);
         ev.setMedicalRecordEntry(mre);
 
 
         EmergencyEvent saved = eventService.createEventWithMre(ev, mre);
 
-        logger.info("EmergencyEvent created id={} by worker={}",
+        logger.info("EmergencyEvent created id={} by doctor={}",
                 saved.getEmergencyEventId(),
-                worker.getUserId());
+                doctor.getUserId());
         return ResponseEntity.ok(saved);
     }
 
@@ -97,7 +99,6 @@ public class EmergencyEventController {
             @RequestHeader("Authorization") String authHeader,
             @PathVariable Long patientId
     ) {
-        // validate token only
         String token = authHeader.startsWith("Bearer ")
                 ? authHeader.substring(7)
                 : authHeader;

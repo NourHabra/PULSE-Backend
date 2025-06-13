@@ -2,6 +2,7 @@ package com.pulse.emergencyevent.model;
 
 
 import com.pulse.medicalrecord.model.MedicalRecordEntry;
+import com.pulse.user.model.Doctor;
 import com.pulse.user.model.EmergencyWorker;
 import jakarta.persistence.*;
 
@@ -17,8 +18,8 @@ public class EmergencyEvent {
     private String notes;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "emergency_worker_id", nullable = false)
-    private EmergencyWorker emergencyWorker;
+    @JoinColumn(name = "doctor_id", nullable = false)
+    private Doctor doctor;
 
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "medical_record_entry_id", nullable = false)
@@ -28,11 +29,10 @@ public class EmergencyEvent {
     public EmergencyEvent() {
     }
 
-    // All-args constructor
-    public EmergencyEvent(Long emergencyEventId, String notes, EmergencyWorker emergencyWorker, MedicalRecordEntry medicalRecordEntry) {
+    public EmergencyEvent(Long emergencyEventId, String notes, Doctor doctor, MedicalRecordEntry medicalRecordEntry) {
         this.emergencyEventId = emergencyEventId;
         this.notes = notes;
-        this.emergencyWorker = emergencyWorker;
+        this.doctor = doctor;
         this.medicalRecordEntry = medicalRecordEntry;
     }
 
@@ -53,12 +53,12 @@ public class EmergencyEvent {
         this.notes = notes;
     }
 
-    public EmergencyWorker getEmergencyWorker() {
-        return emergencyWorker;
+    public Doctor getDoctor() {
+        return doctor;
     }
 
-    public void setEmergencyWorker(EmergencyWorker emergencyWorker) {
-        this.emergencyWorker = emergencyWorker;
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
     }
 
     public MedicalRecordEntry getMedicalRecordEntry() {
