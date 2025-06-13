@@ -140,8 +140,8 @@ public class PatientController {
 
 
     @GetMapping("/patients")
-    public ResponseEntity<List<PatientSummaryDto>> getAllPatients() {
-        List<PatientSummaryDto> patientSummaries = patientService.getAllPatientSummaries();
+    public ResponseEntity<List<PatientSummaryDto2>> getAllPatients() {
+        List<PatientSummaryDto2> patientSummaries = patientService.getAllPatientSummaries();
         return ResponseEntity.ok(patientSummaries);
     }
 
