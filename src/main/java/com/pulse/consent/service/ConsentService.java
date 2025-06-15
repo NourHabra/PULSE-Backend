@@ -121,4 +121,9 @@ public class ConsentService {
         repo.deleteById(consentId);
     }
 
+    @Transactional
+    public void deleteConsentsByPatientId(Long patientId) {
+        repo.deleteByPatientId(patientId);
+    }
+
 }

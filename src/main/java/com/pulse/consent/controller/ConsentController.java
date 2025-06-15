@@ -77,6 +77,8 @@ public class ConsentController {
         Consent c = consentSvc.requestConsent(patientId, doctorId);
 
         pushSvc.notifyPatientConsentPending(patientId, c.getId(), doctorId);
+        log.info("Doctor with ID {} sent a consent request to patient with ID {}", doctorId, patientId);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(c);
     }
 
@@ -146,5 +148,25 @@ public class ConsentController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
+
+    @DeleteMapping("/patient/{patientId}")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<Void> deleteConsentsByPatient(@PathVariable Long patientId,
+                                                        @RequestHeader("Authorization") String token) {
+        try {
+            String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+            UserDetails doctorDetails = jwtService.getUserFromToken(jwtToken);
+
+            if (!jwtService.isTokenValid(jwtToken, doctorDetails))
+                throw new RuntimeException("Invalid or expired token");
+
+            consentSvc.deleteConsentsByPatientId(patientId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            log.error("Doctor failed to delete patient consents: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
 
 }

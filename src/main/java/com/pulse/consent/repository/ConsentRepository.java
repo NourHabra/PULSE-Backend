@@ -13,6 +13,7 @@ public interface ConsentRepository extends JpaRepository<Consent, Long> {
     Optional<Consent> findByPatientIdAndDoctorId(Long patientId, Long doctorId);
     List<Consent> findByDoctorId(Long doctorId);
 
+    void deleteByPatientId(Long patientId);
 
     boolean existsByPatientIdAndDoctorIdAndStatus(
             Long patientId, Long doctorId, ConsentStatus status);
