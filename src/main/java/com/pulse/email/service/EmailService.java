@@ -26,11 +26,10 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
 
-            helper.setText(text, true); // true = HTML
+            helper.setText(text, true);
             helper.setTo(to);
             helper.setSubject(subject);
 
-            // Set name with email
             helper.setFrom(new InternetAddress("contact@test.walidalgower.com", "PULSE Support"));
 
             mailSender.send(message);
@@ -40,14 +39,5 @@ public class EmailService {
     }
 
 
-    public void sendHtmlMessage(String to, String subject, String htmlBody)
-            throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-        helper.setFrom("contact@test.walidalgower.com");
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(htmlBody, true);
-        mailSender.send(mimeMessage);
-    }
+
 }

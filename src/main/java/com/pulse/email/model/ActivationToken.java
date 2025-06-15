@@ -20,7 +20,6 @@ public class ActivationToken {
     private User user;
 
     public ActivationToken() {
-        // no-arg constructor required by JPA
     }
     public ActivationToken(Long id, String token, Instant expiry, User user) {
         this.id = id;

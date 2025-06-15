@@ -47,7 +47,6 @@ public class ActivationService {
 
         String htmlBody = generateActivationEmailHtml(user.getFirstName(), link);
 
-//        String body = String.format("Hello %s,\nPlease activate: %s", user.getFirstName(), link);
 
         emailService.sendSimpleMessage(user.getEmail(), "Activate your account", htmlBody);
     }

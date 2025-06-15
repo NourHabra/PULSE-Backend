@@ -21,7 +21,7 @@ public class AutoSubscribeInterceptor implements ChannelInterceptor {
                     ? "/topic/patient." + p.getUserId()
                     : "/topic/doctor."  + p.getUserId();
 
-            SubscriptionRegistry.add(acc.getSessionId(), dest); // your own store
+            SubscriptionRegistry.add(acc.getSessionId(), dest);
         }
         return message;
     }

@@ -16,7 +16,7 @@ public class StompPrincipal implements Principal {
 
     @Override
     public String getName() {
-        return userId.toString();   // used by Spring’s SimpMessaging
+        return userId.toString();
     }
 
     public Long   getUserId() { return userId; }

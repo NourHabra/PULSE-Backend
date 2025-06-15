@@ -7,14 +7,14 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "EmergencyWorker")
-@PrimaryKeyJoinColumn(name = "EmergencyWorkerID") // PK = FK to User(UserID)
+@PrimaryKeyJoinColumn(name = "EmergencyWorkerID")
 public class EmergencyWorker extends User {
 
     @Column(name = "LicenseNumber")
     private String licenseNumber;
 
     public EmergencyWorker() {
-        super.setRole("emergency_worker"); // or any preferred role label
+        super.setRole("emergency_worker");
     }
 
     public String getLicenseNumber() {

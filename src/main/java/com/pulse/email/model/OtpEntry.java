@@ -15,7 +15,6 @@ public class OtpEntry {
     private String email;
     private int code;
     private Instant expiry;
-    // constructors, getters & setters
 
 
     public OtpEntry() {}

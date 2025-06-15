@@ -28,7 +28,7 @@ public class AuthController {
 
     @GetMapping("/activate")
     public ModelAndView activate(@RequestParam String token) {
-        activationSvc.verifyToken(token); // enable the user
+        activationSvc.verifyToken(token);
         return new ModelAndView("activation-success");
     }
 

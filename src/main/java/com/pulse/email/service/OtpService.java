@@ -50,7 +50,6 @@ public class OtpService {
         Instant expiry = Instant.now().plus(10, ChronoUnit.MINUTES);
         otpRepo.save(new OtpEntry(null, email, code, expiry));
 
-//        String text = String.format("Your OTP is: %d (expires in 10 minutes)", code);
         String htmlBody = generateOtpEmailHtml(code);
 
         emailService.sendSimpleMessage(email, "Your OTP code", htmlBody);

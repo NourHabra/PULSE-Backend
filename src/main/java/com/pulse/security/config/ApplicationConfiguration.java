@@ -25,7 +25,6 @@ public class ApplicationConfiguration {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            // One lookup in the base User table
             User user = userRepository.findByEmail(username);
             if (user == null) {
                 throw new UsernameNotFoundException("User not found");

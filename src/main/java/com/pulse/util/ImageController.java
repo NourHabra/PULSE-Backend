@@ -25,10 +25,9 @@ public class ImageController {
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() && resource.isReadable()) {
-                // Get the file's content type based on its extension
                 String contentType = Files.probeContentType(file);
                 if (contentType == null) {
-                    contentType = "application/octet-stream"; // Default to binary if content type can't be determined
+                    contentType = "application/octet-stream";
                 }
 
                 return ResponseEntity.ok()
@@ -50,8 +49,7 @@ public class ImageController {
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() && resource.isReadable()) {
-                // Set the content type to PDF
-                String contentType = "application/pdf"; // PDF files
+                String contentType = "application/pdf";
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(contentType))
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
@@ -70,10 +68,9 @@ public class ImageController {
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() && resource.isReadable()) {
-                // Get the file's content type based on its extension (image)
                 String contentType = Files.probeContentType(file);
                 if (contentType == null) {
-                    contentType = "application/octet-stream"; // Default to binary if content type can't be determined
+                    contentType = "application/octet-stream";
                 }
 
                 return ResponseEntity.ok()

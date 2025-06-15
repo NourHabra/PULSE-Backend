@@ -11,11 +11,7 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EntityScan(basePackages ={
-        "com.pulse.user.model",
-        "com.pulse.pharmacy.model",
-        "com.pulse.laboratory.model",
-        "com.pulse.email.model",
-        "com.pulse.saving.model",
+
         "com.pulse"
 })
 public class PulseApplication {

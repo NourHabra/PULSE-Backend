@@ -24,7 +24,6 @@ public class Pharmacist extends User {
 
 
     @Column(name = "PharmacistRole")
-    // e.g. "pharmacist" or "manager" if you want to differentiate
     private String pharmacistRole;
 
     public Pharmacist() {

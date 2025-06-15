@@ -22,8 +22,8 @@ public class WebSocketPushService {
         n.setType("CONSENT_REQUEST");
         n.setConsentId(consentId);
         n.setDoctorId(doctorId);
-        n.setPatientId(patientId);          // <─ add / keep this line
-        n.setStatus("PENDING");             // <─ new line
+        n.setPatientId(patientId);
+        n.setStatus("PENDING");
 
         broker.convertAndSendToUser(
                 patientId.toString(),
@@ -41,9 +41,9 @@ public class WebSocketPushService {
         ConsentNotification n = new ConsentNotification();
         n.setType("CONSENT_RESULT");
         n.setConsentId(consentId);
-        n.setDoctorId(doctorId);        // ←  add / keep this line
+        n.setDoctorId(doctorId);
         n.setPatientId(patientId);
-        n.setStatus(status);            // ACTIVE or REJECTED
+        n.setStatus(status);
 
         broker.convertAndSendToUser(
                 doctorId.toString(),

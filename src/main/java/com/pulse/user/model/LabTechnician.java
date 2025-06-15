@@ -27,7 +27,6 @@ public class LabTechnician extends User {
         super.setRole("LAB_TECHNICIAN");
     }
 
-    // Getters & Setters
     public String getLicenseNumber() {
         return licenseNumber;
     }
@@ -39,7 +38,7 @@ public class LabTechnician extends User {
     public Laboratory getWorkingLab() {
         return workingLab;
     }
-    @JsonProperty("laboratoryId")                      // serialise as simple field
+    @JsonProperty("laboratoryId")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public Long getWorkingLabId(){return workingLab != null ? workingLab.getLaboratoryId() : null;}
     public void setWorkingLab(Laboratory workingLab) {

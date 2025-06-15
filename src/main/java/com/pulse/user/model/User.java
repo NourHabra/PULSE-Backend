@@ -60,7 +60,6 @@ public class User implements UserDetails {
     // -- Constructors --
 
     public User() {
-        // Required by JPA and subclasses like Admin
     }
 
     public User(String firstName, String lastName, String gender, LocalDate dateOfBirth,
@@ -79,10 +78,9 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    // --- Required UserDetails methods ---
     @Override
     public String getUsername() {
-        return this.email; // Spring Security treats email as the username
+        return this.email;
     }
 
 
@@ -112,7 +110,6 @@ public class User implements UserDetails {
     }
 
 
-//    Setters and Getters
     public void setEnabled(boolean enabled) {
     this.enabled = enabled;
 }

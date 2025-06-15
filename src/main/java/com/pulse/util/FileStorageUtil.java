@@ -10,7 +10,6 @@ public class FileStorageUtil {
     public static String saveFile(MultipartFile file, String subfolder) throws IOException {
         if (file.isEmpty()) throw new IllegalArgumentException("Cannot upload empty file");
 
-        // Directory where files will be stored
         String baseDir = "uploads";
         String folderPath = baseDir + "/" + subfolder;
         Files.createDirectories(Paths.get(folderPath));

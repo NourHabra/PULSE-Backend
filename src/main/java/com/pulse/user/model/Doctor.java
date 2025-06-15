@@ -23,11 +23,9 @@ public class Doctor extends User {
     @Column(name = "Coordinates")
     private String coordinates;
     public Doctor() {
-        // Optional: Set role = "doctor" by default
         super.setRole("doctor");
     }
 
-    // Additional constructors, getters, setters
     public String getSpecialization() {
         return specialization;
     }
