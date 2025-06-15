@@ -42,6 +42,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/static/**","/testing/**").permitAll()
                         .requestMatchers("/auth/activate", "/auth/**", "/static/**").permitAll()
+                        .requestMatchers("/labs/**").permitAll()
+                        .requestMatchers("/pharmacies/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .anyRequest().authenticated()
                 )
