@@ -2,6 +2,7 @@ package com.pulse.pharmacy.service;
 
 import com.pulse.pharmacy.model.Pharmacy;
 import com.pulse.pharmacy.repository.PharmacyRepository;
+import com.pulse.user.model.Doctor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,5 +52,22 @@ public class PharmacyService {
             throw new RuntimeException("Pharmacy not found with ID: " + id);
         }
         pharmacyRepository.deleteById(id);
+    }
+
+    public String convertToEmbedLink(String coordinatesLink) {
+        if (coordinatesLink == null || !coordinatesLink.startsWith("https://www.google.com/maps/place/")) {
+            throw new IllegalArgumentException("Invalid coordinates link format");
+        }
+
+        String coords = coordinatesLink.replace("https://www.google.com/maps/place/", "");
+
+        return "https://www.google.com/maps?q=" + coords + "&z=15&output=embed";
+    }
+    public String getPharmacyCoordinatesEmbedLink(Long id) {
+        Pharmacy pharm = pharmacyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Doctor not found with ID: " + id));
+        String coordinatesLink = pharm.getLocationCoordinates();
+
+        return convertToEmbedLink(coordinatesLink);
     }
 }

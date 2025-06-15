@@ -51,4 +51,12 @@ public class PharmacyController {
         pharmacyService.deletePharmacy(id);
         return ResponseEntity.noContent().build();
     }
+
+
+
+    @GetMapping("/{id}/coordinates/embed")
+    public ResponseEntity<String> getPharmacyCoordinatesEmbedLink(@PathVariable Long id) {
+        String embedLink = pharmacyService.getPharmacyCoordinatesEmbedLink(id);
+        return ResponseEntity.ok(embedLink);
+    }
 }
