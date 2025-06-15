@@ -110,5 +110,15 @@ public class ConsentService {
         return patientRepository.findAllById(patientIds);
     }
 
+    public void deleteConsentByIdAndPatient(Long consentId, Long patientId) {
+        Consent consent = repo.findById(consentId)
+                .orElseThrow(() -> new RuntimeException("Consent not found"));
+
+        if (!consent.getPatientId().equals(patientId)) {
+            throw new RuntimeException("Unauthorized to delete this consent");
+        }
+
+        repo.deleteById(consentId);
+    }
 
 }

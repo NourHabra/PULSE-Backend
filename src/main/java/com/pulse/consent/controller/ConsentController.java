@@ -125,4 +125,26 @@ public class ConsentController {
 
 
     }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteConsent(@PathVariable Long id,
+                                              @RequestHeader("Authorization") String token) {
+        try {
+            String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+            UserDetails patientDetails = jwtService.getUserFromToken(jwtToken);
+
+            if (!jwtService.isTokenValid(jwtToken, patientDetails))
+                throw new RuntimeException("Invalid or expired token");
+
+            Long patientId = ((Patient) patientDetails).getUserId();
+
+            consentSvc.deleteConsentByIdAndPatient(id, patientId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            log.error("Failed to delete consent: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
 }

@@ -23,7 +23,7 @@ import org.springframework.http.MediaType;
 public class FhirPatientController {
 
     private final PatientRepository patientRepository;
-    private final FhirContext fhirContext;  // Inject this from your FhirConfig
+    private final FhirContext fhirContext;
 
 
     public FhirPatientController(PatientRepository patientRepository, FhirContext fhirContext) {
@@ -42,7 +42,6 @@ public class FhirPatientController {
 
         org.hl7.fhir.r4.model.Patient fhirPatient = PatientFhirMapper.toFhir(patient);
 
-        // Use HAPI FHIR JSON parser to serialize
         String json = fhirContext.newJsonParser().encodeResourceToString(fhirPatient);
 
         return ResponseEntity.ok(json);
@@ -55,7 +54,6 @@ public class FhirPatientController {
                 .map(PatientFhirMapper::toFhir)
                 .collect(Collectors.toList());
 
-        // Wrap in a FHIR Bundle resource for proper FHIR response
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.SEARCHSET);
         for (org.hl7.fhir.r4.model.Patient p : fhirPatients) {
